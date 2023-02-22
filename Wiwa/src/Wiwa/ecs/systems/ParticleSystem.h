@@ -27,6 +27,10 @@ namespace Wiwa {
 		void OnSystemAdded() override;
 
 		void OnSystemRemoved() override;
+
+	private:
+
+		void DeleteParticleSystem();
 	};
 }
 

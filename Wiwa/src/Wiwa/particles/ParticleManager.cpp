@@ -1,7 +1,14 @@
 #include <wipch.h>
+#include "Wiwa/ecs/EntityManager.h"
+#include "Wiwa/scene/SceneManager.h"
 #include "ParticleManager.h"
 #include <iostream>
 #include <Wiwa/utilities/filesystem/FileSystem.h>
+
+ParticleManager::ParticleManager()
+{
+
+}
 
 bool ParticleManager::Init()
 {

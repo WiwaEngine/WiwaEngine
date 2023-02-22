@@ -33,11 +33,12 @@ namespace Wiwa {
 		ParticleManager& particleManager = m_Scene->GetParticleManager();
 		particleManager.UpdateBillBoard(billboardComp);
 		*/
+		
 	}
 
 	void ParticleSystem::OnDestroy()
 	{
-		
+		DeleteParticleSystem();
 	}
 
 	void ParticleSystem::OnSystemAdded() // Called when system added to the editor
@@ -48,9 +49,18 @@ namespace Wiwa {
 
 		// Create object particles from pure data
 	}
+
 	void ParticleSystem::OnSystemRemoved() // Called when system removed to the editor
 	{
 		// Remove that previously created object from pure data
+		DeleteParticleSystem();
+	}
+
+	void ParticleSystem::DeleteParticleSystem()
+	{
+		//---------------------------------------------------------------------------------
+
+
 	}
 }
 

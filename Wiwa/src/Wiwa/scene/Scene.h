@@ -6,6 +6,7 @@
 #include <Wiwa/ecs/EntityManager.h>
 #include <Wiwa/utilities/render/Camera.h>
 #include <Wiwa/utilities/render/CameraManager.h>
+#include <Wiwa/particles/ParticleManager.h>
 
 namespace Wiwa {
 	class LightManager;
@@ -39,6 +40,8 @@ namespace Wiwa {
 		EntityManager& GetEntityManager() { return m_EntityManager; }
 		CameraManager& GetCameraManager() { return *m_CameraManager; }
 		LightManager& GetLightManager() { return *m_LightManager; }
+		ParticleManager& GetParticleManager() { return *m_ParticleManager; }
+
 		inline const char* getName() { return m_Name.c_str(); }
 		inline void ChangeName(const char* name) { m_Name = name; }
 	protected:
@@ -57,6 +60,7 @@ namespace Wiwa {
 		EntityManager m_EntityManager;
 		CameraManager* m_CameraManager;
 		LightManager* m_LightManager;
+		ParticleManager* m_ParticleManager;
 	private:
 		State m_CurrentState = SCENE_ENTERING;
 		size_t m_TransitionTimer = 0;

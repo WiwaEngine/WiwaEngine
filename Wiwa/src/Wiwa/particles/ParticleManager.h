@@ -21,7 +21,6 @@ public:
 	};
 private:
 	// Private constructor = default
-	ParticleManager();
 
 	// Set last error from result
 	static void setLastError(int result);
@@ -32,6 +31,8 @@ private:
 	static std::list<ParticleManager> Emmitters;
 
 public:
+
+	ParticleManager();
 	// Init particle engine
 	static bool Init();
 
