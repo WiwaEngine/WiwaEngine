@@ -28,6 +28,12 @@ namespace Wiwa {
 	class Uniform
 	{
 	public:
+		struct SamplerData {
+			uint32_t tex_id;
+			size_t resource_id;
+			std::string tex_path;
+		};
+
 		Uniform() 
 			: m_Type(UniformType::Bool), name(), m_Data(nullptr), m_UniformID(NULL)
 		{}
@@ -51,8 +57,9 @@ namespace Wiwa {
 				free(m_Data);
 
 			//Reserving memory and copy the value
-			m_Data = malloc(sizeof(T));
-			memcpy(m_Data, &value, sizeof(T));
+			/*m_Data = malloc(sizeof(T));
+			memcpy(m_Data, &value, sizeof(T));*/
+			m_Data = new T(value);
 		}
 
 		void setEmptyData();

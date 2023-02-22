@@ -236,18 +236,16 @@ void EditorLayer::RegenSol()
 	{
 		mutex.lock();
 		if (finishedThread)
+		{
 			s_RegenThread->join();
-	
+		}
 		mutex.unlock();
-
 		delete s_RegenThread;
 	}
 
 	s_RegenThread = new std::thread(RegenSolutionThread);
 	threadExec = true;
-	
 	finishedThread = false;
-	
 }
 
 void EditorLayer::SubmitToMainThread(const std::function<void()> func)

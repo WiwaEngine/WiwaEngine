@@ -81,15 +81,15 @@ namespace Wiwa {
 				mat_path += name.C_Str();
 				mat_path += ".wimaterial";
 
-				ResourceId matID = Resources::Load<Material>(mat_path.string().c_str());
-				if (matID == -1)
+				bool mat_imported = Resources::Import<Material>(mat_path.string().c_str());
+
+				if (!mat_imported)
 				{
-					Material material; // Default settings
+					Material material((Shader*)NULL); // Default settings
 					size_t id;
 
 					if (texture_diffuse.length > 0)
 					{
-
 						std::filesystem::current_path(path);
 
 						std::filesystem::path texture_path = texture_diffuse.C_Str();
@@ -99,15 +99,22 @@ namespace Wiwa {
 
 						texture_path = std::filesystem::relative(texture_path);
 
-						id = Resources::Load<Shader>("resources/shaders/light/lit_model_textured");
-						material.setShader(Resources::GetResourceById<Shader>(id), "resources/shaders/light/lit_model_textured");
+						//const char* default_shader = "resources/shaders/light/lit_model_textured";
+						const char* default_shader = "resources/shaders/light/toon_textured";
+
+						id = Resources::Load<Shader>(default_shader);
+						material.setShader(Resources::GetResourceById<Shader>(id), default_shader);
 
 						bool imported = Resources::Import<Image>(texture_path.string().c_str());
 
 						if (imported) {
-							uint32_t imgId = Resources::Load<Image>(texture_path.string().c_str());
-							Image* img = Resources::GetResourceById<Image>(imgId);
-							material.SetUniformData("u_Tex0", glm::ivec2(img->GetTextureId(), imgId));
+							Uniform::SamplerData sdata;
+							sdata.resource_id = Resources::Load<Image>(texture_path.string().c_str());
+							Image* img = Resources::GetResourceById<Image>(sdata.resource_id);
+							sdata.tex_id = img->GetTextureId();
+							sdata.tex_path = texture_path.string();				
+
+							material.SetUniformData("u_Tex0", sdata);
 						}
 					}
 					else
@@ -117,7 +124,6 @@ namespace Wiwa {
 						material.setShader(Resources::GetResourceById<Shader>(id), "resources/shaders/light/lit_model_color");
 						material.SetUniformData("u_Color", glm::vec4(diffuse.r, diffuse.g, diffuse.b, diffuse.a));
 					}
-
 
 					Material::SaveMaterial(mat_path.string().c_str(), &material);
 				}

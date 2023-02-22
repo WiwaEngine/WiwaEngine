@@ -173,9 +173,11 @@ void MaterialPanel::RenderUniform(Wiwa::Uniform* uniform)
 	}break;
 	case Wiwa::UniformType::Sampler2D:
 	{
+		Wiwa::Uniform::SamplerData* sdata = uniform->getPtrData<Wiwa::Uniform::SamplerData>();
+
 		ImGui::Text(uniform->name.c_str());
 		ImGui::SameLine();
-		ImGui::Image((ImTextureID)(intptr_t)uniform->getPtrData<glm::ivec2>()->x, { 64, 64 });
+		ImGui::Image((ImTextureID)(intptr_t)sdata->tex_id, { 64, 64 });
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -189,9 +191,10 @@ void MaterialPanel::RenderUniform(Wiwa::Uniform* uniform)
 				{
 					if (ImageExtensionComp(p)) 
 					{
-						uint32_t id = Wiwa::Resources::Load<Wiwa::Image>(p.string().c_str());
-						Wiwa::Image* img = Wiwa::Resources::GetResourceById<Wiwa::Image>(id);
-						uniform->setData(glm::ivec2(img->GetTextureId(), id), uniform->getType());
+						sdata->resource_id = Wiwa::Resources::Load<Wiwa::Image>(p.string().c_str());
+						Wiwa::Image* img = Wiwa::Resources::GetResourceById<Wiwa::Image>(sdata->resource_id);
+						sdata->tex_id = img->GetTextureId();
+						sdata->tex_path = p.string().c_str();
 					}
 				}
 
