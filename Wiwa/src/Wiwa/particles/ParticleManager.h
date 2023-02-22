@@ -3,11 +3,12 @@
 #include <Wiwa/core/Core.h>
 #include <Wiwa/utilities/math/Vector3f.h>
 #include "Wiwa/ecs/components/ParticleComponent.h"
+#include "Wiwa/ecs/components/Billboard.h"
 
 #include <vector>
 #include <string>
 
-class WI_API Particle
+class WI_API ParticleManager
 {
 public:
 	struct EventData {
@@ -20,16 +21,15 @@ public:
 	};
 private:
 	// Private constructor = default
-	Particle();
+	ParticleManager();
 
 	// Set last error from result
 	static void setLastError(int result);
 
 	// =========== Variables ===========
 
-	static std::list<Particle> Particles;
-	static std::list<Particle> Emmitters;
-
+	static std::list<ParticleManager> Particles;
+	static std::list<ParticleManager> Emmitters;
 
 public:
 	// Init particle engine
@@ -52,6 +52,14 @@ public:
 	static bool UpdateParticle(); //Add Component Particles inside
 
 	static bool DestroyParticle(); //Add Component Particles inside
+
+	static bool CreateCustomParticle(Wiwa::ParticleComponent* particleComponent);
+
+	// ---------- Billboard ------------
+
+	static bool UpdateBillBoard(Wiwa::Billboard* component); //Add component Billboard inside
+
+	static bool DrawBillboard(Wiwa::Billboard* component);
 
 	// ---------- Emmitter ------------
 	static bool CreatEmitter();
