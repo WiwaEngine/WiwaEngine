@@ -16,5 +16,4 @@ REFLECTION_BEGIN(Wiwa::Billboard)
 REFLECT_MEMBER(billboardAlignement)
 REFLECT_MEMBER(position)
 
-
 REFLECTION_END;

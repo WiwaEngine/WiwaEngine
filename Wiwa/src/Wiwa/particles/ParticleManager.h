@@ -8,66 +8,83 @@
 #include <vector>
 #include <string>
 
-class WI_API ParticleManager
-{
-public:
-	struct EventData {
-		std::string name;
-		uint32_t hash;
+class Camera;
+namespace Wiwa {
+
+	class WI_API ParticleManager
+	{
+	public:
+		struct EventData {
+			std::string name;
+			uint32_t hash;
+		};
+
+		struct BankData : public EventData {
+			std::string path;
+		};
+
+		struct Emitter {
+
+			Emitter(Billboard& billboard_, const size_t id_) : Billboard_(&billboard_), id(id_) {};
+
+			Billboard* Billboard_;
+			size_t id;
+		};
+	private:
+		// Private constructor = default
+
+		// Set last error from result
+		static void setLastError(int result);
+
+		// =========== Variables ===========
+
+		static std::list<ParticleManager> Particles;
+		std::list<Emitter*> emmiters;
+
+	public:
+
+		ParticleManager();
+		// Init particle engine
+		static bool Init();
+
+		// Update audio engine events
+		static bool Update();
+
+		// Terminate particle engine
+		static bool Terminate();
+
+		//Destroys the Particles
+		static bool DestroyAllParticles();
+
+		Emitter* FindByEntityId(size_t id);
+
+		bool DeleteEmitter(Emitter* emitter);
+
+		//To create the particles system
+		static bool CreateParticle(); //Add Component Particles inside
+
+		static bool SpawnParticle();
+
+		static bool UpdateParticle(); //Add Component Particles inside
+
+		static bool DestroyParticle(); //Add Component Particles inside
+
+		static bool CreateCustomParticle(Wiwa::ParticleComponent* particleComponent);
+
+		// ---------- Billboard ------------
+
+		static bool UpdateBillBoard(Wiwa::Billboard* component); //Add component Billboard inside
+
+		static bool DrawBillboard(Wiwa::Billboard* component);
+
+		// ---------- Emmitter ------------
+		static bool CreatEmitter();
+
+		static bool UpdateEmiiter();
+
+		static bool DestroyEmitter();
+
+		static const uint32_t INVALID_ID = -1;
 	};
 
-	struct BankData : public EventData {
-		std::string path;
-	};
-private:
-	// Private constructor = default
-
-	// Set last error from result
-	static void setLastError(int result);
-
-	// =========== Variables ===========
-
-	static std::list<ParticleManager> Particles;
-	static std::list<ParticleManager> Emmitters;
-
-public:
-
-	ParticleManager();
-	// Init particle engine
-	static bool Init();
-
-	// Update audio engine events
-	static bool Update();
-
-	// Terminate particle engine
-	static bool Terminate();
-
-	//Destroys the Particles
-	static bool DestroyAllParticles();
-
-	//To create the particles system
-	static bool CreateParticle(); //Add Component Particles inside
-
-	static bool SpawnParticle();
-
-	static bool UpdateParticle(); //Add Component Particles inside
-
-	static bool DestroyParticle(); //Add Component Particles inside
-
-	static bool CreateCustomParticle(Wiwa::ParticleComponent* particleComponent);
-
-	// ---------- Billboard ------------
-
-	static bool UpdateBillBoard(Wiwa::Billboard* component); //Add component Billboard inside
-
-	static bool DrawBillboard(Wiwa::Billboard* component);
-
-	// ---------- Emmitter ------------
-	static bool CreatEmitter();
-
-	static bool UpdateEmiiter();
-
-	static bool DestroyEmitter();
-
-	static const uint32_t INVALID_ID = -1;
-};
+}

@@ -10,6 +10,7 @@ namespace Wiwa {
 
 	protected:
 		EntityId m_EntityId;
+		Scene* m_Scene;
 
 		template<class T> T* GetComponent();
 
@@ -22,11 +23,16 @@ namespace Wiwa {
 		virtual void OnDestroy(){}
 
 		virtual void OnEntitySet() {}
+
+		virtual void OnSceneSet() {}
+
 	public:
 		System();
 		virtual ~System(); // Virtual destructor, so that child destructor is called
 
 		void SetEntity(EntityId entity) { m_EntityId = entity; OnEntitySet(); }
+		void SetScene(Scene* scene) { m_Scene = scene; OnSceneSet(); }
+
 		EntityId GetEntity() { return m_EntityId; }
 
 		void Awake();
