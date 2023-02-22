@@ -21,7 +21,7 @@ bool ParticleManager::Terminate()
 
 bool ParticleManager::CreateCustomParticle(Wiwa::ParticleComponent* particleComponent)
 {
-	
+	return true;
 }
 
 //Function to add update the billboard should go here
@@ -45,6 +45,7 @@ bool ParticleManager::UpdateBillBoard(Wiwa::Billboard* component)
 		break;
 	}
 	*/
+	return true;
 }
 
 bool ParticleManager::DrawBillboard(Wiwa::Billboard* component)
@@ -68,6 +69,8 @@ bool ParticleManager::DrawBillboard(Wiwa::Billboard* component)
 		camera->frameBuffer - Unbind();
 	}
 	*/
+
+	return true;
 }
 
 
