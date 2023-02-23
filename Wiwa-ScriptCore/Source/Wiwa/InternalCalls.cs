@@ -63,5 +63,11 @@ namespace Wiwa
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong LoadResourceModel(string str);
         #endregion
+        #region Scenes
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void LoadSceneByPathIntr(string str);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void LoadSceneByIndexIntr(int index);
+        #endregion
     }
 }

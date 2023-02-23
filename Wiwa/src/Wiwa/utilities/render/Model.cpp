@@ -114,7 +114,7 @@ namespace Wiwa {
 							sdata.tex_id = img->GetTextureId();
 							sdata.tex_path = texture_path.string();				
 
-							material.SetUniformData("u_Tex0", sdata);
+							material.SetUniformData("u_Texture", sdata);
 						}
 					}
 					else

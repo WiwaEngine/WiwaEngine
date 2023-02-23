@@ -25,7 +25,7 @@ namespace Wiwa
 {
 
 #define WI_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Wiwa.InternalCalls::" #Name, Name)
-
+#pragma region Utils
 	void ClearName(std::string &str)
 	{
 		size_t ind = str.find('.');
@@ -35,6 +35,52 @@ namespace Wiwa
 			str = str.substr(ind + 1, str.size() - ind - 1);
 		}
 	}
+#pragma endregion
+#pragma region ECS
+	/*MonoArray* GetComponent(EntityId id, MonoReflectionType* type)
+	{
+		static std::unordered_map<size_t, Type*> s_ConvertedTypes;
+
+		MonoType* compType = mono_reflection_type_get_type(type);
+		std::string typeName = mono_type_get_name(compType);
+		ClearName(typeName);
+		size_t typeHash = FNV1A_HASH(typeName.c_str());
+
+		std::unordered_map<size_t, Type*>::iterator converted_type = s_ConvertedTypes.find(typeHash);
+
+		Type* t = NULL;
+
+		if (converted_type == s_ConvertedTypes.end()) {
+			t = ConvertType(compType);
+
+			s_ConvertedTypes[typeHash] = t;
+		}
+		else {
+			t = converted_type->second;
+		}
+
+		int alingment;
+
+		Wiwa::EntityManager& em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
+
+		ComponentId compID = em.GetComponentId(t);
+		byte* comp = em.GetComponent(id, compID, t->size);
+
+		MonoArray* byteArray = NULL;
+
+		if (comp) {
+			SystemClass tmp("System", "Byte");
+
+			byteArray = ScriptEngine::CreateArray(tmp.m_MonoClass, t->size);
+
+			for (int i = 0; i < t->size; i++)
+			{
+				mono_array_set(byteArray, byte, i, comp[i]);
+			}
+		}
+
+		return byteArray;
+	}*/
 
 	Class *ConvertClass(MonoType *monotype, MonoClass *monoclass)
 	{
@@ -144,20 +190,7 @@ namespace Wiwa
 		delete type;
 	}
 
-	void NativeLog(MonoString *string, int parameter)
-	{
-		char *str = mono_string_to_utf8(string);
-
-		WI_CORE_TRACE("{0} {1}", str, parameter);
-		mono_free(str);
-	}
-	void NativeLogVector(glm::vec3 *parameter, glm::vec3 *outParam)
-	{
-		WI_CORE_TRACE("Value of X:{0}, Y:{1}, Z{2}", parameter->x, parameter->y, parameter->z);
-		*outParam = glm::normalize(*parameter);
-	}
-
-	/*MonoArray* GetComponent(EntityId id, MonoReflectionType* type)
+	byte* GetComponent(EntityId id, MonoReflectionType* type)
 	{
 		static std::unordered_map<size_t, Type*> s_ConvertedTypes;
 
@@ -170,12 +203,14 @@ namespace Wiwa
 
 		Type* t = NULL;
 
-		if (converted_type == s_ConvertedTypes.end()) {
+		if (converted_type == s_ConvertedTypes.end())
+		{
 			t = ConvertType(compType);
 
 			s_ConvertedTypes[typeHash] = t;
 		}
-		else {
+		else
+		{
 			t = converted_type->second;
 		}
 
@@ -186,35 +221,21 @@ namespace Wiwa
 		ComponentId compID = em.GetComponentId(t);
 		byte* comp = em.GetComponent(id, compID, t->size);
 
-		MonoArray* byteArray = NULL;
+		return comp;
+	}
 
-		if (comp) {
-			SystemClass tmp("System", "Byte");
-
-			byteArray = ScriptEngine::CreateArray(tmp.m_MonoClass, t->size);
-
-			for (int i = 0; i < t->size; i++)
-			{
-				mono_array_set(byteArray, byte, i, comp[i]);
-			}
-		}
-
-		return byteArray;
-	}*/
-	// ECS
-
-	byte *GetComponent(EntityId id, MonoReflectionType *type)
+	byte* AddComponent(EntityId id, MonoReflectionType* type)
 	{
-		static std::unordered_map<size_t, Type *> s_ConvertedTypes;
+		static std::unordered_map<size_t, Type*> s_ConvertedTypes;
 
-		MonoType *compType = mono_reflection_type_get_type(type);
+		MonoType* compType = mono_reflection_type_get_type(type);
 		std::string typeName = mono_type_get_name(compType);
 		ClearName(typeName);
 		size_t typeHash = FNV1A_HASH(typeName.c_str());
 
-		std::unordered_map<size_t, Type *>::iterator converted_type = s_ConvertedTypes.find(typeHash);
+		std::unordered_map<size_t, Type*>::iterator converted_type = s_ConvertedTypes.find(typeHash);
 
-		Type *t = NULL;
+		Type* t = NULL;
 
 		if (converted_type == s_ConvertedTypes.end())
 		{
@@ -227,64 +248,30 @@ namespace Wiwa
 			t = converted_type->second;
 		}
 
-		int alingment;
-
-		Wiwa::EntityManager &em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
+		Wiwa::EntityManager& em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 
 		ComponentId compID = em.GetComponentId(t);
-		byte *comp = em.GetComponent(id, compID, t->size);
+
+		byte* comp = em.AddComponent(id, t, NULL);
 
 		return comp;
 	}
 
-	byte *AddComponent(EntityId id, MonoReflectionType *type)
+	void ApplySystem(EntityId id, MonoReflectionType* type)
 	{
-		static std::unordered_map<size_t, Type *> s_ConvertedTypes;
-
-		MonoType *compType = mono_reflection_type_get_type(type);
+		MonoType* compType = mono_reflection_type_get_type(type);
 		std::string typeName = mono_type_get_name(compType);
 		ClearName(typeName);
 		size_t typeHash = FNV1A_HASH(typeName.c_str());
 
-		std::unordered_map<size_t, Type *>::iterator converted_type = s_ConvertedTypes.find(typeHash);
-
-		Type *t = NULL;
-
-		if (converted_type == s_ConvertedTypes.end())
-		{
-			t = ConvertType(compType);
-
-			s_ConvertedTypes[typeHash] = t;
-		}
-		else
-		{
-			t = converted_type->second;
-		}
-
-		Wiwa::EntityManager &em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
-
-		ComponentId compID = em.GetComponentId(t);
-
-		byte *comp = em.AddComponent(id, t, NULL);
-
-		return comp;
-	}
-
-	void ApplySystem(EntityId id, MonoReflectionType *type)
-	{
-		MonoType *compType = mono_reflection_type_get_type(type);
-		std::string typeName = mono_type_get_name(compType);
-		ClearName(typeName);
-		size_t typeHash = FNV1A_HASH(typeName.c_str());
-
-		Wiwa::EntityManager &em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
+		Wiwa::EntityManager& em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 
 		em.ApplySystem(id, typeHash);
 	}
 
 	EntityId CreateEntity()
 	{
-		Wiwa::EntityManager &em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
+		Wiwa::EntityManager& em = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 
 		return em.CreateEntity();
 	}
@@ -294,8 +281,23 @@ namespace Wiwa
 
 		em.DestroyEntity(eid);
 	}
+#pragma endregion
+#pragma region Log
+	void NativeLog(MonoString* string, int parameter)
+	{
+		char* str = mono_string_to_utf8(string);
 
-	// Input
+		WI_CORE_TRACE("{0} {1}", str, parameter);
+		mono_free(str);
+	}
+	void NativeLogVector(glm::vec3* parameter, glm::vec3* outParam)
+	{
+
+		WI_CORE_TRACE("Value of X:{0}, Y:{1}, Z{2}", parameter->x, parameter->y, parameter->z);
+		*outParam = glm::normalize(*parameter);
+	}
+#pragma endregion
+#pragma region Input
 	bool IsKeyDownIntr(KeyCode keycode)
 	{
 		return Input::IsKeyPressed(keycode);
@@ -320,7 +322,8 @@ namespace Wiwa
 	{
 		return Input::GetMouseYDelta();
 	}
-	//Time
+#pragma endregion
+#pragma region Time
 	float GetDeltaTimeIntr()
 	{
 		return Time::GetDeltaTime();
@@ -329,7 +332,8 @@ namespace Wiwa
 	{
 		return Time::GetTime();
 	}
-
+#pragma endregion
+#pragma region Camera
 	CameraId GetActiveCamera() {
 		Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
 
@@ -342,7 +346,7 @@ namespace Wiwa
 		cam->setPosition(vector);
 	}
 
-	void CameraLookAt(CameraId camid, Vector3f vec){
+	void CameraLookAt(CameraId camid, Vector3f vec) {
 		Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
 		Wiwa::Camera* cam = cm.getCamera(camid);
 		cam->lookat(vec);
@@ -357,15 +361,15 @@ namespace Wiwa
 	void SetCameraRotation(CameraId camid, Vector3f angles) {
 		Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
 		Wiwa::Camera* cam = cm.getCamera(camid);
-		cam->setRotation({angles.x, angles.y, angles.z});
+		cam->setRotation({ angles.x, angles.y, angles.z });
 	}
-
+#pragma endregion
+#pragma region Resources
 	ResourceId LoadResourceModel(MonoString* str) {
 		char* model = mono_string_to_utf8(str);
 
 		return Resources::Load<Model>(model);
 	}
-
 	void AddMeshToEntity(EntityId eid, MonoString* model, MonoString* mat) {
 		char* model_p = mono_string_to_utf8(model);
 		char* mat_p = mono_string_to_utf8(mat);
@@ -383,6 +387,25 @@ namespace Wiwa
 
 		em.AddComponent<Mesh>(eid, mesh);
 	}
+#pragma endregion
+#pragma region Scenes
+	//TODO : Implement
+	void LoadSceneByIndexIntr(uint32_t sceneId)
+	{
+
+	}
+	void LoadSceneByPathIntr(const char* path)
+	{
+		SceneManager::LoadScene(path);
+	}
+	void LoadSceneByNameIntr(const char* name)
+	{
+
+	}
+#pragma endregion
+
+
+	
 
 	void ScriptGlue::RegisterFunctions()
 	{
@@ -419,5 +442,10 @@ namespace Wiwa
 		// Resources
 		WI_ADD_INTERNAL_CALL(LoadResourceModel);
 		WI_ADD_INTERNAL_CALL(AddMeshToEntity);
+
+		//Scene
+		WI_ADD_INTERNAL_CALL(LoadSceneByPathIntr);
+		WI_ADD_INTERNAL_CALL(LoadSceneByNameIntr);
+		WI_ADD_INTERNAL_CALL(LoadSceneByIndexIntr);
 	}
 }
