@@ -84,11 +84,13 @@ namespace Wiwa {
 			if (uniforms[i].getType() == UniformType::Sampler2D) {
 				Uniform::SamplerData* sdata = uniforms[i].getPtrData<Uniform::SamplerData>();
 
-				if (!Resources::Import<Image>(sdata->tex_path.c_str())) {
-					return false;
-				}
+				if (sdata->tex_path != "") {
+					if (!Resources::Import<Image>(sdata->tex_path.c_str())) {
+						return false;
+					}
 
-				sdata->tex_path = _assetToLibPath(sdata->tex_path);
+					sdata->tex_path = _assetToLibPath(sdata->tex_path);
+				}
 
 				//uniforms[i].setData(*sdata, UniformType::Sampler2D);
 			}

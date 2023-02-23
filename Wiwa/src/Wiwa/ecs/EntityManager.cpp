@@ -688,7 +688,7 @@ namespace Wiwa {
 
 	size_t EntityManager::getSystemIndex(EntityId entityId, SystemHash system_hash)
 	{
-		size_t index = INVALID_INDEX;
+		size_t index = WI_INVALID_INDEX;
 
 		size_t size = m_EntitySystemHashes[entityId].size();
 
@@ -732,7 +732,7 @@ namespace Wiwa {
 	{
 		size_t sindex = getSystemIndex(eid, system_hash);
 
-		if (sindex == INVALID_INDEX) return;
+		if (sindex == WI_INVALID_INDEX) return;
 
 		System* system = m_EntitySystems[eid][sindex];
 

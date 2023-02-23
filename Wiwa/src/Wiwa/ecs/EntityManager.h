@@ -72,8 +72,6 @@ namespace Wiwa {
 		EntityManager();
 		~EntityManager();
 
-		static const size_t INVALID_INDEX = -1;
-
 		// System registration functions
 		//Action<> registrations[10];
 

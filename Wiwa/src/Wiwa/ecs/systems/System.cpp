@@ -3,7 +3,7 @@
 
 namespace Wiwa {
 	//-------- CONSTRUCTOR --------
-	System::System() : m_EntityId(EntityManager::INVALID_INDEX)
+	System::System() : m_EntityId(WI_INVALID_INDEX)
 	{
 	}
 

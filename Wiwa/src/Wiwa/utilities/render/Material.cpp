@@ -168,12 +168,15 @@ namespace Wiwa {
 				{
 					Uniform::SamplerData sdata;
 					sdata.tex_path = p->value.GetString();
-					sdata.resource_id = Resources::Load<Image>(sdata.tex_path.c_str());
 
-					Image* img = Resources::GetResourceById<Image>(sdata.resource_id);
-					sdata.tex_id = img->GetTextureId();
+					if (sdata.tex_path != "") {
+						sdata.resource_id = Resources::Load<Image>(sdata.tex_path.c_str());
 
-					uniform->setData(sdata, uniform->getType());
+						Image* img = Resources::GetResourceById<Image>(sdata.resource_id);
+						sdata.tex_id = img->GetTextureId();
+
+						uniform->setData(sdata, uniform->getType());
+					}
 				}break;
 				default:
 					break;
@@ -454,7 +457,7 @@ namespace Wiwa {
 			size_t shaderId = Resources::Load<Shader>(shader_path.c_str());
 			Shader* shader = Resources::GetResourceById<Shader>(shaderId);
 
-			mat->setShader(shader, mat->m_ShaderPath.c_str());
+			mat->setShader(shader, shader_path.c_str());
 		}
 
 		if (matFile.HasMember("uniforms"))

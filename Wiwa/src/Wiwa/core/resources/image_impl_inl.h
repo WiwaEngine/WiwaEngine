@@ -72,6 +72,8 @@ namespace Wiwa {
 	template<>
 	inline ResourceId Resources::Load<Image>(const char* file)
 	{
+		if (!_file_exists(file)) return WI_INVALID_INDEX;
+
 		std::filesystem::path file_path = _assetToLibPath(file);
 		file_path.replace_extension(".dds");
 		ResourceId position = getResourcePosition(WRT_IMAGE, file_path.string().c_str());

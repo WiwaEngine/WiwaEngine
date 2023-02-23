@@ -41,10 +41,9 @@ AssetsPanel::AssetsPanel(EditorLayer* instance)
 		std::filesystem::create_directory(s_AssetsPath);
 	}
 
-	watcher = std::make_unique<filewatch::FileWatch<std::filesystem::path>>(s_AssetsPath, OnFolderEvent);
-
-
 	InitImports(s_AssetsPath);
+
+	watcher = std::make_unique<filewatch::FileWatch<std::filesystem::path>>(s_AssetsPath, OnFolderEvent);
 }
 void AssetsPanel::InitImports(const std::filesystem::path& path)
 {
@@ -261,7 +260,6 @@ void AssetsPanel::Draw()
 					|| directoryEntry.path().extension() == ".fs"
 					|| directoryEntry.path().extension() == ".gs")
 					texID = m_ShaderIcon;
-				
 
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 				if (ImGui::ImageButton(texID, { thumbnailSize, thumbnailSize }))
