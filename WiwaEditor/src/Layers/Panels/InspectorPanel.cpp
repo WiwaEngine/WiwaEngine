@@ -16,6 +16,7 @@
 #include <Wiwa/ecs/components/SpotLight.h>
 #include <Wiwa/ecs/components/DirectionalLight.h>
 
+
 bool InspectorPanel::DrawComponent(size_t componentId)
 {
 	bool ret = true;
@@ -47,6 +48,7 @@ bool InspectorPanel::DrawComponent(size_t componentId)
 		if (type->hash == (size_t)TypeHash::PointLight) { DrawPointLightComponent(data); } else
 		if (type->hash == (size_t)TypeHash::DirectionalLight) { DrawDirectionalLightComponent(data); } else
 		if (type->hash == (size_t)TypeHash::SpotLight) { DrawSpotLightComponent(data); } else
+		if (type->hash == (size_t)TypeHash::ParticleComponent) { DrawParticleComponent(data); } else
 			
 		// Basic component interface
 		if (type->is_class) {
@@ -274,6 +276,21 @@ void InspectorPanel::DrawSpotLightComponent(byte* data)
 	ImGui::SliderFloat("Exponential", &lsrc->Exp, 0.001f, 1.0f);
 	DrawVec3Control("Direction", &lsrc->Direction);
 	ImGui::InputFloat("Cutoff", &lsrc->Cutoff);
+}
+
+void InspectorPanel::DrawParticleComponent(byte* data)
+{
+	
+	Wiwa::ParticleComponent* pComponent = (Wiwa::ParticleComponent*)data;
+
+	DrawVec3Control("Ambient Intensity", &pComponent->Position);
+	ImGui::ColorEdit3("Color", glm::value_ptr(pComponent->Color));
+	ImGui::SliderFloat("Lifetime", &pComponent->lifeTime, 0.001f, 1.0f);
+	ImGui::SliderFloat("Speed", &pComponent->speed, 0.001f, 1.0f);
+	ImGui::SliderFloat("Size", &pComponent->size, 0.001f, 1.0f);
+	ImGui::SliderFloat("Direction Variation", &pComponent->directionVariation, 0.001f, 1.0f);
+	ImGui::SliderFloat("Distance to Camera", &pComponent->distanceToCamera, 0.001f, 1.0f);
+
 }
 
 InspectorPanel::InspectorPanel(EditorLayer* instance)

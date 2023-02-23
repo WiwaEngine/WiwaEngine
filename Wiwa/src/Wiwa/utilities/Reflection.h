@@ -244,5 +244,6 @@ enum class TypeHash : size_t {
 	AudioSource = FNV1A_HASH("AudioSource"),
 	PointLight = FNV1A_HASH("PointLight"),
 	DirectionalLight = FNV1A_HASH("DirectionalLight"),
-	SpotLight = FNV1A_HASH("SpotLight")
+	SpotLight = FNV1A_HASH("SpotLight"),
+	ParticleComponent = FNV1A_HASH("ParticleComponent")
 };
