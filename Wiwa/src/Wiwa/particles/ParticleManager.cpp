@@ -97,4 +97,9 @@ namespace Wiwa {
 
 		return true;
 	}
+
+	bool ParticleManager::AddBillboard(Wiwa::Billboard* component)
+	{
+		return true;
+	}
 }

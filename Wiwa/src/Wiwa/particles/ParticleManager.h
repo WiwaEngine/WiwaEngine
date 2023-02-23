@@ -73,6 +73,8 @@ namespace Wiwa {
 
 		// ---------- Billboard ------------
 
+		static bool AddBillboard(Wiwa::Billboard* component);
+
 		static bool UpdateBillBoard(Wiwa::Billboard* component); //Add component Billboard inside
 
 		static bool DrawBillboard(Wiwa::Billboard* component);
