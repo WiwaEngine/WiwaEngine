@@ -29,6 +29,10 @@ namespace Wiwa {
 
 			Billboard* Billboard_;
 			size_t id;
+
+			glm::vec3 billboardRotation;
+
+			inline void setRotation(const glm::vec3 rot);
 		};
 	private:
 		// Private constructor = default

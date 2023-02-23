@@ -28,6 +28,8 @@ namespace Wiwa {
 
 		void OnSystemRemoved() override;
 
+		void ScreenAlign();
+
 	private:
 
 		void DeleteParticleSystem();

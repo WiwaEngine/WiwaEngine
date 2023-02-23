@@ -134,6 +134,60 @@ namespace Wiwa {
 		}
 	}
 
+	void ParticleSystem::ScreenAlign()
+	{
+		/*
+		switch (billboard_alignment)
+		{
+		case Billboarding_Alignment::SCREEN_ALIGNED:
+			ScreenAlign();
+			break;
+		case Billboarding_Alignment::WORLD_ALIGNED:
+			WorldAlign();
+			break;
+		case Billboarding_Alignment::AXIS_ALIGNED:
+			AxisAlign();
+			break;
+		default:
+			break;
+		}
+		*/
+		//-----------------------------------------------------------------------------------------------
+		/*
+		float3 normal = (App->camera->GetPosition() - this->transform->GetPosition()).Normalized();
+		float3 up = App->camera->GetCurrentCamera()->GetFrustum().Up();
+		float3 right = normal.Cross(up);
+
+		float3x3 mat = float3x3::identity;
+		mat.Set(-right.x, -right.y, -right.z, up.x, up.y, up.z, normal.x, normal.y, normal.z);
+
+		transform->SetRotation(mat.Inverted().ToEulerXYZ());
+		*/
+		//-----------------------------------------------------------------------------------------------
+
+		//The main goal here is to apply the alignment to the billboard of the particle
+		//(Moving the plain in the direction of the camera)
+
+		Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
+		CameraId cameraId;
+		cameraId = cm.getActiveCameraId();
+		Wiwa::Camera* cam = cm.getCamera(cameraId);
+		//cam->setFront(vector);
+		Wiwa::EntityManager& entityManager = m_Scene->GetEntityManager();
+		const char* e_name = entityManager.GetEntityName(m_EntityId);
+		ParticleManager& particleManager = m_Scene->GetParticleManager();
+
+		glm::vec3 normal = (cam->getPosition() -  glm::normalize(particleManager.FindByEntityId(m_EntityId)->Billboard_->position));
+		glm::vec3 up = cam->getUp();
+		glm::vec3 right = glm::cross(normal, up);
+
+		//glm::mat4 m4(1.0f); //Constructs the Identity Matrix
+		//m4[3] = glm::vec4(glm::vec3(-right.x, -right.y, -right.z), glm::vec3(up.x, up.y, up.z), glm::vec3(normal.x, normal.y, normal.z), 1.0f);
+
+		//particleManager.FindByEntityId(m_EntityId)->setRotation(m4[3]);
+
+	}
+
 	void ParticleSystem::OnSystemRemoved() // Called when system removed to the editor
 	{
 		// Remove that previously created object from pure data

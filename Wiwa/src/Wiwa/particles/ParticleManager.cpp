@@ -54,22 +54,9 @@ namespace Wiwa {
 
 	bool ParticleManager::UpdateBillBoard(Wiwa::Billboard* component)
 	{
-		/*
-		switch (billboard_alignment)
-		{
-		case Billboarding_Alignment::SCREEN_ALIGNED:
-			ScreenAlign();
-			break;
-		case Billboarding_Alignment::WORLD_ALIGNED:
-			WorldAlign();
-			break;
-		case Billboarding_Alignment::AXIS_ALIGNED:
-			AxisAlign();
-			break;
-		default:
-			break;
-		}
-		*/
+
+		//Here to add the Screen Align for the Billboard
+
 		return true;
 	}
 
@@ -101,5 +88,18 @@ namespace Wiwa {
 	bool ParticleManager::AddBillboard(Wiwa::Billboard* component)
 	{
 		return true;
+	}
+
+	void Wiwa::ParticleManager::Emitter::setRotation(const glm::vec3 rot)
+	{
+		billboardRotation = rot;
+
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(rot.x)) * cos(glm::radians(rot.y));
+		direction.y = sin(glm::radians(rot.y));
+		direction.z = sin(glm::radians(rot.x)) * cos(glm::radians(rot.y));
+
+		glm::vec3 front = glm::normalize(direction);
+		//setFront({ front.x, front.y, front.z });
 	}
 }
