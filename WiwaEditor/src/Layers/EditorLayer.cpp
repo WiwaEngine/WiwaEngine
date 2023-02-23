@@ -26,9 +26,12 @@
 
 #include "../Entities.h"
 EditorLayer* EditorLayer::s_Instance = nullptr;
+
 std::string EditorLayer::s_SolVersion = "vs2022";
 std::string EditorLayer::s_BuildConf = "Release";
+
 std::thread* EditorLayer::s_RegenThread;
+
 EditorLayer::EditorLayer()
 	: Layer("Editor Layer")
 {
@@ -240,7 +243,8 @@ void EditorLayer::RegenSol()
 			s_RegenThread->join();
 		}
 		mutex.unlock();
-		delete s_RegenThread;
+		if(finishedThread)
+			delete s_RegenThread;
 	}
 
 	s_RegenThread = new std::thread(RegenSolutionThread);
@@ -603,9 +607,9 @@ void EditorLayer::LoadPanelConfig()
 	size_t psize = m_Panels.size();
 
 	if (config.HasMember("sol_version"))
-		s_SolVersion = config["sol_version"].get<const char*>();
+		s_SolVersion = config["sol_version"].as_string();
 	if (config.HasMember("build_conf"))
-		s_SolVersion = config["build_conf"].get<const char*>();
+		s_BuildConf = config["build_conf"].as_string();
 	if (config.HasMember("active_layout")) {
 		m_ActiveLayout = config["active_layout"].as_string();
 
