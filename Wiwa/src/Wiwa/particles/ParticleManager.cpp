@@ -90,8 +90,9 @@ namespace Wiwa {
 		return true;
 	}
 
-	void Wiwa::ParticleManager::Emitter::setRotation(const glm::vec3 rot)
+	ParticleManager::Emitter* ParticleManager::setRotation(const glm::vec3 rot)
 	{
+		//When particles start drawing in the screen we might need to adjust the formula
 		billboardRotation = rot;
 
 		glm::vec3 direction;
@@ -101,5 +102,6 @@ namespace Wiwa {
 
 		glm::vec3 front = glm::normalize(direction);
 		//setFront({ front.x, front.y, front.z });
+		return nullptr;
 	}
 }

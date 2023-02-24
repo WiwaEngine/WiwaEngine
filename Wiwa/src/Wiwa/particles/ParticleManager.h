@@ -29,10 +29,6 @@ namespace Wiwa {
 
 			Billboard* Billboard_;
 			size_t id;
-
-			glm::vec3 billboardRotation;
-
-			inline void setRotation(const glm::vec3 rot);
 		};
 	private:
 		// Private constructor = default
@@ -44,6 +40,7 @@ namespace Wiwa {
 
 		static std::list<ParticleManager> Particles;
 		std::list<Emitter*> emmiters;
+		glm::vec3 billboardRotation;
 
 	public:
 
@@ -61,6 +58,8 @@ namespace Wiwa {
 		static bool DestroyAllParticles();
 
 		Emitter* FindByEntityId(size_t id);
+
+		Emitter* setRotation(const glm::vec3 rot);
 
 		bool DeleteEmitter(Emitter* emitter);
 

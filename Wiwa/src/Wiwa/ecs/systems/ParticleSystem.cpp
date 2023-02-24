@@ -181,11 +181,10 @@ namespace Wiwa {
 		glm::vec3 up = cam->getUp();
 		glm::vec3 right = glm::cross(normal, up);
 
-		//glm::mat4 m4(1.0f); //Constructs the Identity Matrix
-		//m4[3] = glm::vec4(glm::vec3(-right.x, -right.y, -right.z), glm::vec3(up.x, up.y, up.z), glm::vec3(normal.x, normal.y, normal.z), 1.0f);
+		glm::mat4 m4(1.0f); //Constructs the Identity Matrix
+		m4[3] = (glm::vec4(-right.x, -right.y, -right.z, 1.0f), glm::vec4(up.x, up.y, up.z, 1.0f), glm::vec4(normal.x, normal.y, normal.z, 1.0f));
 
-		//particleManager.FindByEntityId(m_EntityId)->setRotation(m4[3]);
-
+		particleManager.setRotation(m4[3]);
 	}
 
 	void ParticleSystem::OnSystemRemoved() // Called when system removed to the editor
