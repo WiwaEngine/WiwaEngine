@@ -126,9 +126,6 @@ namespace Wiwa {
 		// Create directory
 		static bool CreateDir(const char* path);
 
-		// Copy file
-		static void Copy(const char* origin, const char* destination);
-
 		// Create directories recursively
 		static bool CreateDirs(const char* path);
 

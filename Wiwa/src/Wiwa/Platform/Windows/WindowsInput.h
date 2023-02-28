@@ -17,7 +17,5 @@ namespace Wiwa
 		virtual void UpdateImpl() override;
 		virtual void LockCursorImpl() override;
 		virtual void UnlockCursorImpl() override;
-		virtual float GetAxisImpl(int gamepadIndx, int axis) override;
-		virtual bool IsButtonPressedImpl(int gamepadIndx, int keycode) override;
 	};
 }

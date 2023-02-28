@@ -32,12 +32,8 @@ namespace Wiwa {
 
 		if (!asrc) return;
 
-		if (asrc->playOnAwake)
-		{
-			if (!Audio::PostEvent(asrc->eventName, m_EntityId, { &Wiwa::AudioSystem::OnEventFinish, this })) {
-				WI_CORE_ERROR("Audio couldn't post event [{}]", Audio::GetLastError());
-			}
-			asrc->isPlaying = true;
+		if (!Audio::PostEvent(asrc->eventName, m_EntityId)) {
+			WI_CORE_ERROR("Audio couldn't post event [{}]", Audio::GetLastError());
 		}
 	}
 
@@ -61,14 +57,5 @@ namespace Wiwa {
 		}
 
 		Audio::UnregisterGameObject(m_EntityId);
-	}
-
-	void AudioSystem::OnEventFinish()
-	{
-		AudioSource* asrc = GetComponent<AudioSource>();
-
-		if (!asrc) return;
-
-		asrc->isPlaying = false;
 	}
 }

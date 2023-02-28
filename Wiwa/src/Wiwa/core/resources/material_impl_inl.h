@@ -1,14 +1,14 @@
 #pragma once
 #include "resources_impl.h"
-namespace Wiwa
-{
+namespace Wiwa {
 	//--SPECIALIZATION FOR MATERIAL
-	template <>
-	inline void Resources::LoadMeta<Material>(const char *file)
+	template<>
+	inline void Resources::LoadMeta<Material>(const char* file)
 	{
+
 	}
-	template <>
-	inline void Resources::CreateMeta<Material>(const char *file)
+	template<>
+	inline void Resources::CreateMeta<Material>(const char* file)
 	{
 		std::filesystem::path filePath = file;
 		if (!std::filesystem::exists(filePath))
@@ -19,8 +19,8 @@ namespace Wiwa
 		doc.AddMember("timeCreated", time);
 		doc.save_file(filePath.string().c_str());
 	}
-	template <>
-	inline ResourceId Resources::Load<Material>(const char *file)
+	template<>
+	inline ResourceId Resources::Load<Material>(const char* file)
 	{
 		if (!std::filesystem::exists(file))
 		{
@@ -36,39 +36,35 @@ namespace Wiwa
 
 		ResourceId resourceId;
 
-		if (position == size)
-		{
+		if (position == size) {
 
-			Material *material = new Material(file_path.c_str());
+			Material* material = new Material(file_path.c_str());
 
 			PushResource(WRT_MATERIAL, file_path.c_str(), material);
 
 			resourceId = size;
 		}
-		else
-		{
+		else {
 			resourceId = position;
 		}
 
 		return resourceId;
 	}
-	template <>
-	inline Material *Resources::GetResourceById<Material>(ResourceId id)
+	template<>
+	inline Material* Resources::GetResourceById<Material>(ResourceId id)
 	{
-		Material *material = NULL;
+		Material* material = NULL;
 
-		if (id >= 0 && id < m_Resources[WRT_MATERIAL].size())
-		{
-			material = static_cast<Material *>(m_Resources[WRT_MATERIAL][id]->resource);
+		if (id >= 0 && id < m_Resources[WRT_MATERIAL].size()) {
+			material = static_cast<Material*>(m_Resources[WRT_MATERIAL][id]->resource);
 		}
 
 		return material;
 	}
-	template <>
-	inline bool Resources::Import<Material>(const char *file)
+	template<>
+	inline bool Resources::Import<Material>(const char* file)
 	{
-		if (!_file_exists(file))
-			return false;
+		if (!_file_exists(file)) return false;
 
 		std::filesystem::path import_file = file;
 		std::filesystem::path export_file = _assetToLibPath(file);
@@ -76,70 +72,27 @@ namespace Wiwa
 
 		std::filesystem::path export_path = export_file.parent_path();
 
-		if (_preparePath(export_path.string()))
-		{
+		if (_preparePath(export_path.string())) {
 			std::ifstream source(file, std::ios::binary);
 			std::ofstream dest(export_file.c_str(), std::ios::binary);
 
 			dest << source.rdbuf();
 
-			for (size_t i = 0; i < size; i++)
-			{
-				if (uniforms[i].getType() == UniformType::Sampler2D)
-				{
-					Uniform::SamplerData *sdata = uniforms[i].getPtrData<Uniform::SamplerData>();
-
-					if (sdata->tex_path != "")
-					{
-						if (!Resources::Import<Image>(sdata->tex_path.c_str()))
-						{
-							return false;
-						}
-
-						std::filesystem::path p = _assetToLibPath(sdata->tex_path);
-						p.replace_extension(".dds");
-
-						sdata->tex_path = p.string();
-					}
-
-					// uniforms[i].setData(*sdata, UniformType::Sampler2D);
-				}
-			}
-
-			WI_CORE_INFO("Material at {} imported succesfully!", import_file.string().c_str());
-			return true;
+			source.close();
+			dest.close();
 		}
 
-		template <>
-		inline bool Resources::CheckImport<Material>(const char *file)
-		{
-			return _check_import_impl(file, ".wimaterial");
-		}
-
-		template <>
-		inline const char *Resources::getResourcePathById<Material>(size_t id)
-		{
-			return getPathById(WRT_MATERIAL, id);
-		}
-
-		template <>
-		inline void Resources::UnloadResourcesOf<Material>()
-		{
-			std::vector<Resource *> &rvec = m_Resources[WRT_MATERIAL];
-			size_t count = rvec.size();
-
-			for (size_t i = 0; i < count; i++)
-			{
-				if (!rvec[i]->isNative)
-				{
-					Material *mat = (Material *)rvec[i]->resource;
-
-					delete mat;
-
-					rvec.erase(rvec.begin() + i);
-					i--;
-					count--;
-				}
-			}
-		}
+		WI_CORE_INFO("Material at {} imported succesfully!", import_file.string().c_str());
+		return true;
 	}
+	template<>
+	inline bool Resources::CheckImport<Material>(const char* file)
+	{
+		return _check_import_impl(file, ".wimaterial");
+	}
+	template<>
+	inline const char* Resources::getResourcePathById<Material>(size_t id)
+	{
+		return getPathById(WRT_MATERIAL, id);
+	}
+}

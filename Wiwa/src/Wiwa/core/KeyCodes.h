@@ -3,64 +3,12 @@
 namespace Wiwa
 {
 	using KeyCode = uint16_t;
-	using GamepadAxis = uint16_t;
-	using GamepadNum = uint16_t;
-	namespace Gamepad
-	{
-		enum : GamepadNum
-		{
-			GamePad1 = 0,
-			GamePad2 = 1,
-			GamePad3 = 2,
-			GamePad4 = 3,
-			GamePad5 = 4,
-			GamePad6 = 5,
-			GamePad7 = 6,
-			GamePad8 = 7,
-			GamePad9 = 8,
-			GamePad10 = 9,
-			GamePad11 = 10,
-			GamePad12 = 11,
-			GamePad13 = 12,
-			GamePad14 = 13,
-			GamePad15 = 14,
-			GamePad16 = 15
-		};
 
-		enum : GamepadAxis
-		{
-			LeftX = 0,
-			LeftY = 1,
-			RightX = 2,
-			RightY = 3,
-			LeftTrigger = 4,
-			RightTrigger = 5
-		};
-	}
 	namespace Key
 	{
 		enum : KeyCode
 		{
 			// From glfw3.h
-
-			GamepadA = 0,
-			GamepadB = 1,
-			GamepadX = 2,
-			GamepadY = 3,
-			GamepadLeftBumper = 4,
-			GamepadRigthBumper = 5,
-			GamepadStart = 6,
-			GamepadGuide = 7,
-			GamepadLeftThumb = 8,
-			GamepadRitghtThumb = 9,
-			GamepadDPadUp = 10,
-			GamepadDPadRight = 11,
-			GamepadDPadLeft = 12,
-			GamepadCross = GamepadA,
-			GamepadCircle = GamepadB,
-			GamepadSquare = GamepadX,
-			GamepadTriangle = GamepadY,
-
 			Space = 32,
 			Apostrophe = 39, /* ' */
 			Comma = 44, /* , */

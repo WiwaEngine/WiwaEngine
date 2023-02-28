@@ -7,7 +7,6 @@
 #include <Wiwa/render/RenderManager.h>
 #include <Wiwa/core/Renderer2D.h>
 
-
 GamePanel::GamePanel(EditorLayer* instance)
 	: Panel("Game", ICON_FK_GAMEPAD,instance)
 {

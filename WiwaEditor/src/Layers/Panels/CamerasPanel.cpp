@@ -76,10 +76,8 @@ void CamerasPanel::Draw()
 			float fov = cam->getFOV();
 			float nearP = cam->getNear();
 			float farP = cam->getFar();
-
 			DrawVec3Control("Position", glm::value_ptr(pos), 0.0f, 50.0f);
 			DrawVec3Control("Angles", glm::value_ptr(angles), 0.0f, 50.0f);
-
 			cam->setRotation(angles);
 			ImGui::DragFloat("Fov", &fov);
 			ImGui::DragFloat("Near", &nearP);
