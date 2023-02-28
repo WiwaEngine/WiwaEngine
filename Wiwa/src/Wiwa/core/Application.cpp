@@ -20,6 +20,8 @@
 #include "Renderer3D.h"
 #include "Renderer2D.h"
 
+#include <Wiwa/ecs/Components.h>
+#include <Wiwa/ecs/Systems.h>
 #include <Wiwa/ecs/systems/SpriteRenderer.h>
 #include <Wiwa/ecs/systems/MeshRenderer.h>
 #include <Wiwa/ecs/systems/AudioSystem.h>

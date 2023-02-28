@@ -7,7 +7,7 @@ private:
 	void (Callable::* action)(_params...);
 	Callable* obj;
 public:
-	Action() = default;
+	Action() { obj = NULL; };
 
 	template<class T>
 	Action(void (T::* _action)(_params...), void* _obj) {
@@ -22,6 +22,8 @@ public:
 	void operator()(_params... params) {
 		execute(params...);
 	}
+
+	bool HasAction() { return obj != NULL; }
 
 	void* getObj() { return obj; }
 	void* getActionPtr() { return (void*&)action; }

@@ -3,6 +3,7 @@
 #include "System.h"
 #include "../components/Transform3D.h"
 #include "../components/Mesh.h"
+#include "../components/AudioSource.h"
 
 #include <Wiwa/utilities/Reflection.h>
 
@@ -15,6 +16,10 @@ namespace Wiwa {
 		~MeshRenderer();
 
 		void OnUpdate() override;
+
+		void OnComponentAdded(byte* data, const Type* type) override {}
+
+		void OnComponentRemoved(byte* data, const Type* type) override {}
 	};
 }
 

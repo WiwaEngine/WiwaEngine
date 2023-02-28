@@ -21,6 +21,8 @@ namespace Wiwa {
 		void OnUpdate() override;
 
 		void OnDestroy() override;
+
+		void OnEventFinish();
 	};
 }
 

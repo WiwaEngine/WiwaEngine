@@ -104,6 +104,10 @@ namespace Wiwa {
 		glVertexAttribPointer(9, 2, GL_FLOAT, GL_FALSE, sizeof(VertexInstanceTexture), (void*)(15 * sizeof(float)));
 		glVertexAttribDivisor(9, 1);
 
+		glEnableVertexAttribArray(10);
+		glVertexAttribPointer(10, 1, GL_FLOAT, GL_FALSE, sizeof(VertexInstanceTexture), (void*)(17 * sizeof(float)));
+		glVertexAttribDivisor(10, 1);
+
 		m_InstanceVertex = new VertexInstanceTexture[m_MaxInstances];
 
 		m_OrthoLocation = m_InstanceShader.getUniformLocation("u_Proj");
@@ -142,20 +146,33 @@ namespace Wiwa {
 
 	uint32_t InstanceRenderer::AddInstance(uint32_t textureId, const Vector2i& position, const Size2i& size, const Color4f& color, const TextureClip& clip, Renderer2D::Pivot pivot)
 	{
-		if (m_InstanceCount == m_MaxInstances)
-			return -1;
+		uint32_t remove_size = m_RemovedInstances.size();
+		uint32_t instance_id = WI_INVALID_INDEX;
 
-		m_InstanceVertex[m_InstanceCount].position = Renderer2D::CalculateScreenGlPos(position, size, pivot);
-		m_InstanceVertex[m_InstanceCount].scale = { static_cast<float>(size.x), static_cast<float>(size.y) };
-		m_InstanceVertex[m_InstanceCount].color = color;
+		if (remove_size > 0) {
+			instance_id = m_RemovedInstances[remove_size - 1];
+			m_RemovedInstances.pop_back();
+		}
+		else {
+			if (m_InstanceCount == m_MaxInstances)
+				return instance_id;
+
+			instance_id = m_InstanceCount++;
+		}
+
+		m_InstanceVertex[instance_id].position = Renderer2D::CalculateScreenGlPos(position, size, pivot);
+		m_InstanceVertex[instance_id].scale = { static_cast<float>(size.x), static_cast<float>(size.y) };
+		m_InstanceVertex[instance_id].color = color;
 
 		int texid = AddTexture(textureId);
 
-		m_InstanceVertex[m_InstanceCount].textureId = static_cast<float>(texid);
+		m_InstanceVertex[instance_id].textureId = static_cast<float>(texid);
 
-		m_InstanceVertex[m_InstanceCount].textureClip = clip;
+		m_InstanceVertex[instance_id].textureClip = clip;
 
-		return m_InstanceCount++;
+		m_InstanceVertex[instance_id].active = 1.0f;
+
+		return instance_id;
 	}
 
 	void InstanceRenderer::UpdateInstance(uint32_t id, const Vector2i& position, const  Size2i& size, const Color4f& color, Renderer2D::Pivot pivot)
@@ -193,5 +210,27 @@ namespace Wiwa {
 		}
 
 		return index;
+	}
+
+	void InstanceRenderer::DisableInstance(uint32_t instance)
+	{
+		m_InstanceVertex[instance].active = 0.0f;
+	}
+
+	void InstanceRenderer::EnableInstance(uint32_t instance)
+	{
+		m_InstanceVertex[instance].active = 1.0f;
+	}
+
+	void InstanceRenderer::SetEnabled(uint32_t instance, bool enabled)
+	{
+		m_InstanceVertex[instance].active = enabled ? 1.0f : 0.0f;
+	}
+
+	void InstanceRenderer::RemoveInstance(uint32_t instance)
+	{
+		m_InstanceVertex[instance].active = 0.0f;
+
+		m_RemovedInstances.push_back(instance);
 	}
 }

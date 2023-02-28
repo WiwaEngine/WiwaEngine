@@ -133,6 +133,8 @@ void EditorLayer::OnAttach()
 
 	LoadCallback();
 
+	m_ReloadLayout = false;
+
 	WI_TRACE("Editor layer attached!");
 }
 
@@ -146,7 +148,7 @@ void EditorLayer::OnDetach()
 void EditorLayer::OnUpdate()
 {
 	if (m_ReloadLayout) {
-		ImGui::LoadIniSettingsFromDisk(("config/layouts/"+m_ActiveLayout).c_str());
+		ImGui::LoadIniSettingsFromDisk(m_ActiveLayout.c_str());
 		m_ReloadLayout = false;
 	}
 
@@ -201,13 +203,11 @@ void EditorLayer::OnEvent(Wiwa::Event &e)
 
 void EditorLayer::LoadScene(const std::string& m_Path)
 {
-	// Unload editor scene before loading new scene into editor
-	//Wiwa::SceneManager::UnloadScene(m_EditorSceneId);
-
 	// Load scene and prepare it
 	SceneId id = Wiwa::SceneManager::LoadScene(m_Path.c_str());
 	Wiwa::Scene* scene = Wiwa::SceneManager::getScene(id);
-	scene->GetEntityManager().AddSystemToWhitelist(FNV1A_HASH("MeshRenderer"));
+	scene->GetEntityManager().AddSystemToWhitelist<Wiwa::MeshRenderer>();
+
 	Wiwa::SceneManager::SetScene(id);
 
 	// Update editor scene references
@@ -231,6 +231,52 @@ void EditorLayer::RegenSolutionThread()
 	mutex.lock();
 	finishedThread = true;
 	mutex.unlock();
+}
+
+void EditorLayer::LoadLayout(const char* path)
+{
+	Wiwa::JSONDocument layout(path);
+
+	if (layout.HasMember("imgui_file")) {
+		m_ActiveLayout = layout["imgui_file"].as_string();
+
+		size_t psize = m_Panels.size();
+
+		for (size_t i = 0; i < psize; i++)
+		{
+			Panel* p = m_Panels[i];
+
+			if (layout.HasMember(p->GetName()))
+			{
+				p->active = layout[p->GetName()].as_bool();
+			}
+		}
+
+		m_ReloadLayout = true;
+	}
+}
+
+void EditorLayer::SaveLayout(LayoutData& ldata)
+{
+	Wiwa::JSONDocument layout;
+	
+	std::filesystem::path p = ldata.path;
+	p.replace_extension(".ini");
+
+	layout.AddMember("imgui_file", p.string().c_str());
+	
+	size_t psize = m_Panels.size();
+
+	for (size_t i = 0; i < psize; i++)
+	{
+		Panel* panel = m_Panels[i];
+
+		layout.AddMember(panel->GetName(), panel->active);
+	}
+
+	layout.save_file(ldata.path.c_str());
+
+	Wiwa::FileSystem::Copy("imgui.ini", p.string().c_str());
 }
 
 void EditorLayer::RegenSol()
@@ -291,7 +337,7 @@ void EditorLayer::MainMenuBar()
 				m_OpenedScenePath = "";
 
 				Wiwa::SceneManager::SetScene(m_EditorSceneId);
-				m_EditorScene->GetEntityManager().AddSystemToWhitelist(FNV1A_HASH("MeshRenderer"));
+				m_EditorScene->GetEntityManager().AddSystemToWhitelist<Wiwa::MeshRenderer>();
 			}
 			if (ImGui::MenuItem(ICON_FK_FOLDER " Open scene", ""))
 			{
@@ -331,12 +377,118 @@ void EditorLayer::MainMenuBar()
 		}
 		if (ImGui::BeginMenu("Layout")) {
 			if (ImGui::MenuItem("Scene layout")) {
-				m_ActiveLayout = "scene_layout.ini";
-				m_ReloadLayout = true;
+				LoadLayout("config/layouts/scene_layout.wilayout");
 			}
-			if (ImGui::MenuItem("UI layout")) {
+
+			/*if (ImGui::MenuItem("UI layout")) {
 				
+			}*/
+
+			static size_t save_ind = 0;
+			static LayoutData* save_ldata = nullptr;
+
+			size_t csize = m_CustomLayouts.size();
+
+			for (size_t i = 0; i < csize; i++) {
+				LayoutData& ldata = m_CustomLayouts[i];
+
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				if (ImGui::Button(ldata.name.c_str())) {
+					LoadLayout(ldata.path.c_str());
+				}
+				ImGui::PopStyleColor();
+
+				ImGui::SameLine();
+
+				ImGui::PushID(i);
+
+				if (ImGui::Button("Save")) {
+					save_ldata = &ldata;
+					save_ind = i;
+
+					ImGui::OpenPopup("save_layout");
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Delete")) {
+					std::filesystem::path p = ldata.path;
+					p.replace_extension(".ini");
+
+					Wiwa::FileSystem::Remove(ldata.path.c_str());
+					Wiwa::FileSystem::Remove(p.string().c_str());
+
+					m_CustomLayouts.erase(m_CustomLayouts.begin() + i);
+					i--;
+					csize--;
+				}
+				ImGui::PopID();
 			}
+
+			if (ImGui::Button("New layout")) {
+				ImGui::OpenPopup("create_layout");
+			}
+
+			ImGui::PushID(save_ind);
+			if (ImGui::BeginPopup("save_layout")) {
+				ImGui::Text("Save layout");
+
+				std::string msg = "Are you sure you want to override layout [";
+				msg += save_ldata->name;
+				msg += "] with the current layout setup? This change can't be undone.";
+
+				ImGui::Text(msg.c_str());
+
+				if (ImGui::Button("Save")) {
+					SaveLayout(*save_ldata);
+					ImGui::CloseCurrentPopup();
+				}
+				
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) {
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+
+			if (ImGui::BeginPopup("create_layout")) {
+				static char name[64] = { 0 };
+
+				ImGui::Text("Create Layout");
+				ImGui::InputText("Layout name", name, 64);
+
+				if (ImGui::Button("Create")) {
+					std::string compact_name = name;
+
+					size_t index = 0;
+
+					do { 
+						index = compact_name.find(' ', index);
+
+						if (index != compact_name.npos) {
+							compact_name[index] = '_';
+						}
+					} while (index != compact_name.npos);
+
+					std::string path = "config/layouts/";
+
+					std::string wipath = path + compact_name + ".wilayout";
+
+					LayoutData ldata;
+					ldata.name = name;
+					ldata.path = wipath;
+
+					SaveLayout(ldata);
+
+					m_CustomLayouts.push_back(ldata);
+
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Script"))
@@ -604,20 +756,28 @@ void EditorLayer::LoadPanelConfig()
 {
 	Wiwa::JSONDocument config("config/panels.json");
 
-	size_t psize = m_Panels.size();
-
 	if (config.HasMember("sol_version"))
 		s_SolVersion = config["sol_version"].as_string();
 	if (config.HasMember("build_conf"))
 		s_BuildConf = config["build_conf"].as_string();
-	if (config.HasMember("active_layout")) {
-		m_ActiveLayout = config["active_layout"].as_string();
+	
+	if (config.HasMember("custom_layouts")) {
+		Wiwa::JSONValue clayouts = config["custom_layouts"];
 
-		ImGuiContext* ctx = Wiwa::Application::Get().GetImGuiContext();
-		ImGui::SetCurrentContext(ctx);
-		ImGui::LoadIniSettingsFromDisk(("config/layouts/" + m_ActiveLayout).c_str());
+		uint32_t size = clayouts.Size();
+
+		for (uint32_t i = 0; i < size; i++) {
+			Wiwa::JSONValue layout = clayouts[i];
+
+			LayoutData ldata;
+			ldata.name = layout["name"].as_string();
+			ldata.path = layout["path"].as_string();
+
+			m_CustomLayouts.push_back(ldata);
+		}
 	}
 
+	size_t psize = m_Panels.size();
 
 	for (size_t i = 0; i < psize; i++)
 	{
@@ -634,11 +794,22 @@ void EditorLayer::SavePanelConfig()
 {
 	Wiwa::JSONDocument config;
 
-	size_t psize = m_Panels.size();
-
 	config.AddMember("sol_version", s_SolVersion.c_str());
 	config.AddMember("build_conf", s_BuildConf.c_str());
-	config.AddMember("active_layout", m_ActiveLayout.c_str());
+
+	Wiwa::JSONValue clayouts = config.AddMemberArray("custom_layouts");
+
+	size_t lsize = m_CustomLayouts.size();
+
+	for (size_t i = 0; i < lsize; i++) {
+		LayoutData& ldata = m_CustomLayouts[i];
+
+		Wiwa::JSONValue val = clayouts.PushBackObject();
+		val.AddMember("name", ldata.name.c_str());
+		val.AddMember("path", ldata.path.c_str());
+	}
+
+	size_t psize = m_Panels.size();
 
 	for (size_t i = 0; i < psize; i++)
 	{

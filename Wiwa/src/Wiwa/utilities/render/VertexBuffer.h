@@ -33,6 +33,9 @@ namespace Wiwa {
 		// Texture data
 		float textureId;
 		TextureClip textureClip;
+
+		// render
+		float active;
 	};
 
 	struct Quad {

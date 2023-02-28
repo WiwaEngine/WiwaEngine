@@ -143,6 +143,26 @@ namespace Wiwa {
 		return instanceRenderer->AddInstance(textureId, position, size, color, tclip, pivot);
 	}
 
+	void Renderer2D::RemoveInstance(uint32_t instance)
+	{
+		instanceRenderer->RemoveInstance(instance);
+	}
+
+	void Renderer2D::EnableInstance(uint32_t instance)
+	{
+		instanceRenderer->EnableInstance(instance);
+	}
+
+	void Renderer2D::DisableInstance(uint32_t instance)
+	{
+		instanceRenderer->DisableInstance(instance);
+	}
+
+	void Renderer2D::SetInstanceEnabled(uint32_t instance, bool enabled)
+	{
+		instanceRenderer->SetEnabled(instance, enabled);
+	}
+
 	void Renderer2D::UpdateInstancedQuadTex(uint32_t id, const Vector2i& position, Pivot pivot)
 	{
 		instanceRenderer->UpdateInstance(id, position, pivot);

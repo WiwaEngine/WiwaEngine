@@ -46,11 +46,24 @@ namespace Wiwa
 		JSONValue AddMemberObject(const char *mem);
 		JSONValue AddMemberArray(const char* mem);
 
-		void PushBack(JSONValue& value);
+		JSONValue Begin();
+		JSONValue End();
+		JSONValue Next();
+
+		size_t Size();
+
+		bool IsObject();
+		bool IsArray();
+
+		template<class T>
+		JSONValue PushBack(T value);
+
+		JSONValue PushBackObject();
 
 		bool HasMember(const char *mem);
 
 		JSONValue operator[](const char *key);
+		JSONValue operator[](uint32_t index);
 	};
 
 	template <class T>
@@ -92,6 +105,16 @@ namespace Wiwa
 		rapidjson::Value &jval = m_Value->AddMember(key, v, *m_Allocator);
 
 		return {&jval, m_Allocator};
+	}
+
+	template<class T>
+	inline JSONValue JSONValue::PushBack(T value)
+	{
+		rapidjson::Value v(value);
+
+		rapidjson::Value& jval = m_Value->PushBack(v, *m_Allocator);
+
+		return { &jval, m_Allocator };
 	}
 
 	template <>

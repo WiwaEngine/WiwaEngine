@@ -56,6 +56,10 @@ namespace Wiwa {
 		return std::filesystem::create_directory(path);
 	}
 
+	void FileSystem::Copy(const char* origin, const char* destination) {
+		std::filesystem::copy(origin, destination, std::filesystem::copy_options::overwrite_existing);
+	}
+
 	bool FileSystem::CreateDirs(const char* path)
 	{
 		return std::filesystem::create_directories(path);;

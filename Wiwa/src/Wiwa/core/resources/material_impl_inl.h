@@ -89,7 +89,10 @@ namespace Wiwa {
 						return false;
 					}
 
-					sdata->tex_path = _assetToLibPath(sdata->tex_path);
+					std::filesystem::path p = _assetToLibPath(sdata->tex_path);
+					p.replace_extension(".dds");
+
+					sdata->tex_path = p.string();
 				}
 
 				//uniforms[i].setData(*sdata, UniformType::Sampler2D);
@@ -103,14 +106,34 @@ namespace Wiwa {
 		WI_CORE_INFO("Material at {} imported succesfully!", import_file.string().c_str());
 		return true;
 	}
+
 	template<>
 	inline bool Resources::CheckImport<Material>(const char* file)
 	{
 		return _check_import_impl(file, ".wimaterial");
 	}
+
 	template<>
 	inline const char* Resources::getResourcePathById<Material>(size_t id)
 	{
 		return getPathById(WRT_MATERIAL, id);
+	}
+
+	template<>
+	inline void Resources::UnloadResourcesOf<Material>() {
+		std::vector<Resource*>& rvec = m_Resources[WRT_MATERIAL];
+		size_t count = rvec.size();
+
+		for (size_t i = 0; i < count; i++) {
+			if (!rvec[i]->isNative) {
+				Material* mat = (Material*)rvec[i]->resource;
+
+				delete mat;
+
+				rvec.erase(rvec.begin() + i);
+				i--;
+				count--;
+			}
+		}
 	}
 }

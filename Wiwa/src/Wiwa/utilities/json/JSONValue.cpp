@@ -38,9 +38,53 @@ namespace Wiwa {
 		return JSONValue(&jval, m_Allocator);
 	}
 
-	void JSONValue::PushBack(JSONValue& value)
+	JSONValue JSONValue::Begin()
 	{
+		rapidjson::Value* jval = m_Value->Begin();
 
+		return JSONValue(jval, m_Allocator);
+	}
+
+	JSONValue JSONValue::End()
+	{
+		rapidjson::Value* jval = m_Value->End();
+
+		return JSONValue(jval, m_Allocator);
+	}
+
+	JSONValue JSONValue::Next()
+	{
+		rapidjson::Value* jval = m_Value->Begin();
+		jval++;
+
+		return JSONValue(jval, m_Allocator);
+	}
+
+	size_t JSONValue::Size()
+	{
+		return m_Value->Size();
+	}
+
+	bool JSONValue::IsObject()
+	{
+		return m_Value->IsObject();
+	}
+
+	bool JSONValue::IsArray()
+	{
+		return m_Value->IsArray();
+	}
+
+	JSONValue JSONValue::PushBackObject()
+	{
+		rapidjson::Value obj(rapidjson::kObjectType);
+
+		m_Value->PushBack(obj, *m_Allocator);
+
+		rapidjson::Value* jval = m_Value->End();
+		jval--;
+
+		return { jval, m_Allocator };
 	}
 
 	bool JSONValue::HasMember(const char* mem)
@@ -51,5 +95,10 @@ namespace Wiwa {
 	JSONValue JSONValue::operator[](const char* key)
 	{
 		return JSONValue(&m_Value->operator[](key), m_Allocator);
+	}
+
+	JSONValue JSONValue::operator[](uint32_t index)
+	{
+		return JSONValue(&m_Value->operator[](index), m_Allocator);
 	}
 }

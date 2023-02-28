@@ -9,7 +9,8 @@ layout (location = 2) in vec2 l_PosOffset;
 layout (location = 3) in vec2 l_Scale;
 layout (location = 4) in vec4 l_Color;
 layout (location = 5) in float l_TexID;
-layout (location = 6) in vec2 l_TexClip[4];
+layout (location = 6) in vec2 l_TexClip[4]; // from loc 6 to 9
+layout (location = 10) in float l_Active;
 
 //uniform mat4 u_Model;
 uniform mat4 u_View;
@@ -18,20 +19,25 @@ uniform mat4 u_Proj;
 out vec4 f_Color;
 out vec2 f_TexCoord;
 out float f_TexID;
+out float f_Active;
 
 void main()
-{	
-	// Scale
-	vec3 vpos = l_VPos;
-	vpos.xy = vpos.xy * l_Scale.xy;
+{
+	if(l_Active > 0.5f){
+		// Scale
+		vec3 vpos = l_VPos;
+		vpos.xy = vpos.xy * l_Scale.xy;
+		
+		// Translate
+		vpos.xy += l_PosOffset;
+		
+		// Out position
+		gl_Position = u_Proj * u_View * vec4(vpos, 1.0);
+		
+		f_Color = l_Color;
+		f_TexCoord = l_TexClip[gl_VertexID];
+		f_TexID = l_TexID;
+	}
 	
-	// Translate
-	vpos.xy += l_PosOffset;
-	
-	// Out position
-	gl_Position = u_Proj * u_View * vec4(vpos, 1.0);
-	
-	f_Color = l_Color;
-	f_TexCoord = l_TexClip[gl_VertexID];
-	f_TexID = l_TexID;
+	f_Active = l_Active;
 }

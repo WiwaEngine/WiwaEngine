@@ -598,6 +598,32 @@ bool Audio::PostEvent(const char* event_name, uint64_t game_object)
     return true;
 }
 
+void PostEventCallback(AkCallbackType type, AkCallbackInfo* cbinfo) {
+    Action<>* naction = (Action<>*)cbinfo->pCookie;
+
+    if (type == AkCallbackType::AK_EndOfEvent) {
+        naction->execute();
+    }
+
+    delete naction;
+}
+
+bool Audio::PostEvent(const char* event_name, uint64_t game_object, Action<> action)
+{
+    Action<>* naction = new Action(action);
+
+    AkPlayingID play_id = AK::SoundEngine::PostEvent(event_name, game_object, AK_EndOfEvent, PostEventCallback, naction);
+
+    if (play_id == AK_INVALID_PLAYING_ID) {
+        m_LastErrorMsg = "Couldn't post event [";
+        m_LastErrorMsg += event_name;
+        m_LastErrorMsg += "]";
+        return false;
+    }
+
+    return true;
+}
+
 bool Audio::StopEvent(const char* event_name, uint64_t game_object)
 {
     AKRESULT res = AK::SoundEngine::ExecuteActionOnEvent(event_name, AK::SoundEngine::AkActionOnEventType::AkActionOnEventType_Stop, game_object);

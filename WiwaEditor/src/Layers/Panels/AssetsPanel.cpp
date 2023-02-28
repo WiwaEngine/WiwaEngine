@@ -148,7 +148,7 @@ void AssetsPanel::CheckImport(const std::filesystem::path& path)
 	Wiwa::Resources::standarizePath(p);
 	if (ImageExtensionComp(path) 
 		&& (!Wiwa::Resources::CheckImport<Wiwa::Image>(p.c_str())
-		|| Wiwa::Resources::CheckMeta(p.c_str()) == Wiwa::Resources::TOUPDATE))
+	|| Wiwa::Resources::CheckMeta(p.c_str()) != Wiwa::Resources::UPDATED))
 	{
 		Wiwa::ImageSettings settings;
 		Wiwa::Resources::LoadMeta<Wiwa::Image>(p.c_str(), &settings);
@@ -157,7 +157,7 @@ void AssetsPanel::CheckImport(const std::filesystem::path& path)
 	}
 	else if (ModelExtensionComp(path) 
 		&& (!Wiwa::Resources::CheckImport<Wiwa::Model>(p.c_str())
-		|| Wiwa::Resources::CheckMeta(p.c_str()) == Wiwa::Resources::TOUPDATE))
+		|| Wiwa::Resources::CheckMeta(p.c_str()) != Wiwa::Resources::UPDATED))
 	{
 		Wiwa::ModelSettings settings;
 		Wiwa::Resources::LoadMeta<Wiwa::Model>(p.c_str(), &settings);
@@ -189,7 +189,7 @@ void AssetsPanel::CheckImport(const std::filesystem::path& path)
 	}
 	else if (MaterialExtensionComp(path) 
 		&& (!Wiwa::Resources::CheckImport<Wiwa::Material>(p.c_str())
-		|| Wiwa::Resources::CheckMeta(p.c_str()) == Wiwa::Resources::TOUPDATE))
+		|| Wiwa::Resources::CheckMeta(p.c_str()) != Wiwa::Resources::UPDATED))
 	{
 		Wiwa::Resources::CreateMeta<Wiwa::Material>(p.c_str());
 		Wiwa::Resources::Import<Wiwa::Material>(p.c_str());
@@ -447,7 +447,6 @@ void AssetsPanel::TopBar()
 
 void AssetsPanel::CheckMeta(const std::filesystem::path& path)
 {
-
 	std::string p = path.string();
 	Wiwa::Resources::standarizePath(p);
 	std::string metaPath = p;

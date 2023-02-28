@@ -17,6 +17,7 @@ namespace Wiwa {
 		ResourceId m_InstanceShaderId;
 		Shader m_InstanceShader;
 
+		std::vector<uint32_t> m_RemovedInstances;
 		std::vector<int> m_Textures;
 
 		VertexInstanceTexture* m_InstanceVertex;
@@ -42,5 +43,11 @@ namespace Wiwa {
 		void UpdateInstance(uint32_t id, const Vector2i& position, const Size2i& size, const Color4f& color, Renderer2D::Pivot pivot = Renderer2D::Pivot::CENTER);
 		void UpdateInstance(uint32_t id, const Vector2i& position, Renderer2D::Pivot pivot = Renderer2D::Pivot::CENTER);
 		int AddTexture(uint32_t texture);
+
+		void DisableInstance(uint32_t instance);
+		void EnableInstance(uint32_t instance);
+		void SetEnabled(uint32_t instance, bool enabled);
+
+		void RemoveInstance(uint32_t instance);
 	};
 }

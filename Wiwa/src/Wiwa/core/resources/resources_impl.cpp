@@ -3,6 +3,12 @@
 
 #include "../vendor/stb/stb_image.h"
 
+// Resource implementations
+#include "image_impl_inl.h"
+#include "material_impl_inl.h"
+#include "model_impl_inl.h"
+#include "shader_impl_inl.h"
+
 namespace Wiwa {
 	std::vector<Resources::Resource*> Resources::m_Resources[Resources::WRT_LAST];
 
@@ -89,17 +95,12 @@ namespace Wiwa {
 		}
 	}
 
-	void Resources::UnloadSceneResources()
+	void Resources::UnloadAllResources()
 	{
-		return;
-		for (size_t i = 0; i < WRT_LAST; i++)
-		{
-			for (size_t j = 0; j < m_Resources[i].size(); j++)
-			{
-				if (!m_Resources[i][j]->isNative)
-					m_Resources[i].erase(m_Resources[i].begin() + j);
-			}
-		}
+		UnloadResourcesOf<Image>();
+		UnloadResourcesOf<Material>();
+		//UnloadResourcesOf<Shader>();
+		UnloadResourcesOf<Model>();
 	}
 	
 	Resources::MetaResult Resources::CheckMeta(const char* filename)
@@ -123,7 +124,7 @@ namespace Wiwa {
 			time_t metaTime = metaFile["timeCreated"].get<time_t>();
 			time_t fileTime = to_time_t(std::filesystem::last_write_time(filename));
 
-			if (metaTime != fileTime)
+			if (metaTime < fileTime)
 				return TOUPDATE;
 		}
 		return UPDATED;
@@ -133,7 +134,6 @@ namespace Wiwa {
 	{
 		std::filesystem::path metaPath = filename;
 		metaPath.replace_extension(".meta");
-
 
 		if (!std::filesystem::exists(filename))
 			return;
@@ -164,6 +164,7 @@ namespace Wiwa {
 			WI_ERROR("Image at {0} needs to be square in order to be imported", origin);
 			return;
 		}
+
 		Image::raw_to_dds_file(destination, image, w, h, 32);
 
 		stbi_image_free(image);

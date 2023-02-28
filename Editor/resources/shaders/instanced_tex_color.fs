@@ -5,10 +5,13 @@ uniform sampler2D u_Textures[2];
 in vec4 f_Color;
 in vec2 f_TexCoord;
 in float f_TexID;
+in float f_Active;
 
 out vec4 out_color;
 
 void main() {
+	if(f_Active < 0.5f) discard;
+	
 	vec2 texCoordFlip = f_TexCoord;
 	int index = int(f_TexID);
 

@@ -130,14 +130,34 @@ namespace Wiwa {
 
 		return true;
 	}
+
 	template<>
 	inline bool Resources::CheckImport<Shader>(const char* file)
 	{
 		return _check_import_impl(file, ".wishader");
 	}
+
 	template<>
 	inline const char* Resources::getResourcePathById<Shader>(size_t id)
 	{
 		return getPathById(WRT_SHADER, id);
+	}
+
+	template<>
+	inline void Resources::UnloadResourcesOf<Shader>() {
+		std::vector<Resource*>& rvec = m_Resources[WRT_SHADER];
+		size_t count = rvec.size();
+
+		for (size_t i = 0; i < count; i++) {
+			if (!rvec[i]->isNative) {
+				Shader* mat = (Shader*)rvec[i]->resource;
+
+				delete mat;
+
+				rvec.erase(rvec.begin() + i);
+				i--;
+				count--;
+			}
+		}
 	}
 }

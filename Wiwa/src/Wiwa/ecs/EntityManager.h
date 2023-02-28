@@ -68,6 +68,9 @@ namespace Wiwa {
 		std::vector<SystemHash> m_SystemWhiteList;
 
 		size_t getSystemIndex(EntityId entityId, SystemHash system_hash);
+
+		void OnComponentAdded(EntityId entityId, byte* data, const Type* type);
+		void OnComponentRemoved(EntityId entityId, byte* data, const Type* type);
 	public:
 		EntityManager();
 		~EntityManager();

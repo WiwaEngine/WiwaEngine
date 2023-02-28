@@ -58,9 +58,12 @@ public:
 	void SubmitToMainThread(const std::function<void()> func);
 
 	static void RegenSol();
-
-
 private:
+	struct LayoutData {
+		std::string name;
+		std::string path;
+	};
+
 	void MainMenuBar();
 	void OpenCloseAssetsFolder();
 	void SaveProject();
@@ -88,6 +91,9 @@ private:
 	void ExecuteMainThreadQueue();
 	static void RegenSolutionThread();
 
+	// Layouts
+	void LoadLayout(const char* path);
+	void SaveLayout(LayoutData& ldata);
 private:
 	bool m_ShowConsole = false;
 	bool m_ShowDemo = false;
@@ -118,6 +124,8 @@ private:
 	// Editor layouts
 	std::string m_ActiveLayout;
 	bool m_ReloadLayout;
+
+	std::vector<LayoutData> m_CustomLayouts;
 
 	Action<Wiwa::Event &> m_EventCallback;
 

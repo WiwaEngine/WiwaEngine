@@ -43,6 +43,10 @@ namespace Wiwa {
 
 		virtual void OnSystemRemoved(){}
 
+		virtual void OnComponentAdded(byte* data, const Type* type) {}
+
+		virtual void OnComponentRemoved(byte* data, const Type* type) {}
+
 		void Destroy();
 	};
 

@@ -242,6 +242,7 @@ void InspectorPanel::DrawAudioSourceComponent(byte* data)
 
 	//ImGui::Checkbox("Is default listener", &asrc->isDefaultListener);
 	ImGui::InputText("Event", asrc->eventName, sizeof(asrc->eventName));
+	ImGui::Checkbox("Play on awake", &asrc->playOnAwake);
 }
 
 void InspectorPanel::DrawPointLightComponent(byte* data)
