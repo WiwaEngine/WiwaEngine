@@ -138,7 +138,7 @@ namespace Wiwa {
 
 		static void _toLower(std::string& path);
 		inline static std::vector<Resource*>& GetResourcesOf(ResourceType rt) { return m_Resources[rt]; }
-		static void UnloadSceneResources();
+		static void UnloadAllResources();
 
 		// Returns the state of the meta file
 		// Deleted: the meta file is deleted due to the reference file not existing
@@ -156,6 +156,8 @@ namespace Wiwa {
 		template<class T, class... T2> static bool Import(const char* file, T2... settings);
 		template<class T, class... T2> static void CreateMeta(const char* file, T2... settings);
 		template<class T, class... T2> static void LoadMeta(const char* file, T2... settings);
+
+		template<class T> static void UnloadResourcesOf();
 
 		inline static void SaveFile(const char* file, std::string& shaderFile)
 		{

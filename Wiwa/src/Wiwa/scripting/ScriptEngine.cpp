@@ -17,8 +17,7 @@
 
 #include "SystemScriptClass.h"
 
-
-
+#include "MonoWiwaTranslations.h"
 
 namespace Wiwa {
 	ScriptEngine::ScriptEngineData* ScriptEngine::s_Data = nullptr;

@@ -2,6 +2,7 @@
 
 #include <Wiwa/core/Core.h>
 #include <Wiwa/utilities/math/Vector3f.h>
+#include <Wiwa/utilities/functions/Action.h>
 
 #include <vector>
 #include <string>
@@ -100,8 +101,14 @@ public:
 	// Post an event into the audio engine for a specific gameobject
 	static bool PostEvent(const char* event_name, uint64_t game_object);
 
+	// Post an event into the audio engine for a specific gameobject and callback
+	static bool PostEvent(const char* event_name, uint64_t game_object, Action<> callback);
+
 	// Post an event into the default gameobject
 	static bool PostEvent(const char* event_name) { return PostEvent(event_name, m_DefaultListener); }
+
+	// Post an event into the default gameobject with callback
+	static bool PostEvent(const char* event_name, Action<> callback) { return PostEvent(event_name, m_DefaultListener, callback); }
 
 	// Stop event for a specific gameobject
 	static bool StopEvent(const char* event_name, uint64_t game_object);

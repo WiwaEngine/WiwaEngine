@@ -10,13 +10,16 @@
 #include <glew.h>
 
 namespace Wiwa {
-	Image::Image()
+	Image::Image() : m_TextureId(-1)
 	{
 
 	}
 
 	Image::~Image()
 	{
+        if (m_TextureId != uint32_t(-1)) {
+            glDeleteTextures(1, &m_TextureId);
+        }
 	}
 
 	bool Image::Init(const char* path)

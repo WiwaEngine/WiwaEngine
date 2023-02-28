@@ -151,4 +151,22 @@ namespace Wiwa {
 	{
 		return getPathById(WRT_IMAGE, id);
 	}
+
+	template<>
+	inline void Resources::UnloadResourcesOf<Image>() {
+		std::vector<Resource*>& rvec = m_Resources[WRT_IMAGE];
+		size_t count = rvec.size();
+
+		for (size_t i = 0; i < count; i++) {
+			if (!rvec[i]->isNative) {
+				Image* img = (Image*)rvec[i]->resource;
+
+				delete img;
+
+				rvec.erase(rvec.begin() + i);
+				i--;
+				count--;
+			}
+		}
+	}
 }

@@ -705,6 +705,14 @@ namespace Wiwa {
 		if (model_hierarchy) {
 			delete model_hierarchy;
 		}
+
+		glDeleteBuffers(1, &vbo);
+		glDeleteBuffers(1, &ebo);
+		glDeleteBuffers(1, &bbvbo);
+		glDeleteBuffers(1, &bbvbo);
+
+		glDeleteVertexArrays(1, &vao);
+		glDeleteVertexArrays(1, &bbvao);
 	}
 
 	void Model::Render()

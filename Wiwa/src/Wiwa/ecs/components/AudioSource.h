@@ -8,10 +8,14 @@ namespace Wiwa {
 	struct WI_API AudioSource {
 		bool isDefaultListener;
 		char eventName[32];
+		bool playOnAwake;
+		bool isPlaying;
 	};
 }
 
 REFLECTION_BEGIN(Wiwa::AudioSource)
 	REFLECT_MEMBER(isDefaultListener)
 	REFLECT_MEMBER(eventName)
+	REFLECT_MEMBER(playOnAwake)
+	REFLECT_MEMBER(isPlaying)
 REFLECTION_END;

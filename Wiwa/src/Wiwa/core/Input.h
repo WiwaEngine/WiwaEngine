@@ -16,6 +16,8 @@ namespace Wiwa
 		inline static float GetMouseYDelta() { return s_Instance->GetMouseYDeltaImpl(); }
 		inline static void LockCursor() { s_Instance->LockCursorImpl(); }
 		inline static void UnlockCursor() { s_Instance->UnlockCursorImpl(); }
+		inline static float GetAxis(int gamepadIndx, int axis) { return s_Instance->GetAxisImpl(gamepadIndx, axis); }
+		inline static bool IsButtonPressed(int gamepadIndx,int keycode) { return s_Instance->IsButtonPressedImpl(gamepadIndx, keycode); }
 
 		inline static void Update() { return s_Instance->UpdateImpl(); }
 	protected:
@@ -29,6 +31,8 @@ namespace Wiwa
 		virtual void UpdateImpl() = 0;
 		virtual void LockCursorImpl() = 0;
 		virtual void UnlockCursorImpl() = 0;
+		virtual float GetAxisImpl(int gamepadIndx, int axis) = 0;
+		virtual bool IsButtonPressedImpl(int gamepadIndx, int keycode) = 0;
 	private:
 		static Input* s_Instance;
 	protected:

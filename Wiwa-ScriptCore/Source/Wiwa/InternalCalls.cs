@@ -40,6 +40,10 @@ namespace Wiwa
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float GetMouseYDeltaIntr();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool IsButtonPressedIntr(Gamepad gamepad, KeyCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float GetAxisIntr(Gamepad gamepad, GamepadAxis axis);
         #endregion
         #region Time
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -63,5 +67,17 @@ namespace Wiwa
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong LoadResourceModel(string str);
         #endregion
+        //#region Audio
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void PlayMusic(string str);
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void StopMusic(string str);
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void PlaySound(string str, EntityId entity);
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void StopSound(string str, EntityId entity);
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void StopAllEvents();
+        //#endregion
     }
 }

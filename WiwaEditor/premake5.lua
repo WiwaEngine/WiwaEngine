@@ -7,6 +7,8 @@ project "WiwaEditor"
 
 	files
 	{
+		"resource.h",
+		"WiwaEditor.rc",
 		"src/**.h",
 		"src/**.cpp"
 	}
