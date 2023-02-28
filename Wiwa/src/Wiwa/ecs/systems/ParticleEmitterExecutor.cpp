@@ -80,15 +80,24 @@ namespace Wiwa {
 			glBindVertexArray(0);
 
 
-			r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.scale, 
+			size_t cameraCount = man.getCameraSize();
+			std::vector<CameraId>& cameras = man.getCameras();
+
+			for (size_t i = 0; i < cameraCount; i++)
+			{
+				CameraId cam_id = cameras[i];
+				Camera* camera = man.getCamera(cam_id);
+
+				r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.scale,
+					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true);
+			}
+
+			r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.scale,
 				lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true);
 
 			glDeleteVertexArrays(1, &VAO);
 			glDeleteBuffers(1, &VBO);
 			glDeleteBuffers(1, &EBO);
-
-			//hacer ifs para las demas camaras
-
 		}
 		//WI_CORE_INFO("test");
 
