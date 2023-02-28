@@ -70,12 +70,12 @@ namespace Wiwa {
 
 		//Particle Shader ==> Temporal hasta materiales
 		m_ParticleShaderId = Resources::Load<Shader>("resources/shaders/debug/particle_display");
-		m_ParticleShaderShader = Resources::GetResourceById<Shader>(m_ParticleShaderId);
-		m_ParticleShaderShader->Compile("resources/shaders/debug/particle_display");
+		m_ParticleShader = Resources::GetResourceById<Shader>(m_ParticleShaderId);
+		m_ParticleShader->Compile("resources/shaders/debug/particle_display");
 
-		m_ParticleUniforms.Model = m_ParticleShaderShader->getUniformLocation("u_Model");
-		m_ParticleUniforms.View = m_ParticleShaderShader->getUniformLocation("u_View");
-		m_ParticleUniforms.Projection = m_ParticleShaderShader->getUniformLocation("u_Proj");
+		m_ParticleUniforms.Model = m_ParticleShader->getUniformLocation("u_Model");
+		m_ParticleUniforms.View = m_ParticleShader->getUniformLocation("u_View");
+		m_ParticleUniforms.Projection = m_ParticleShader->getUniformLocation("u_Proj");
 
 		std::vector<const char*> faces = {
 			"resources/images/skybox/right.jpg",
@@ -320,10 +320,10 @@ namespace Wiwa {
 	void Renderer3D::RenderQuad(unsigned int vao, std::vector<int> ebo_data, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, const size_t& directional,
 		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights/*, Material* material*/, bool clear, Camera* camera, bool cull)
 	{
-		if (!camera)
+		/*if (!camera)
 		{
 			camera = SceneManager::getActiveScene()->GetCameraManager().getActiveCamera();
-		}
+		}*/
 
 		glViewport(0, 0, camera->frameBuffer->getWidth(), camera->frameBuffer->getHeight());
 
@@ -347,23 +347,20 @@ namespace Wiwa {
 		//SetUpLight(matShader, camera, directional, pointLights, spotLights);
 		////material->Bind();
 
+		
 
-		m_ParticleShaderShader->Bind();
-		m_ParticleShaderShader->setUniform(m_ParticleUniforms.Model, model);
-		m_ParticleShaderShader->setUniform(m_ParticleUniforms.View, camera->getView());
-		m_ParticleShaderShader->setUniform(m_ParticleUniforms.Projection, camera->getProjection());
+		m_ParticleShader->Bind();
+		m_ParticleShader->setUniform(m_ParticleUniforms.Model, model);
+		m_ParticleShader->setUniform(m_ParticleUniforms.View, camera->getView());
+		m_ParticleShader->setUniform(m_ParticleUniforms.Projection, camera->getProjection());
 
 		//make the drawing
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, ebo_data.size(), GL_INT, 0);
+		glDrawElements(GL_TRIANGLES, ebo_data.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
-		m_BBDisplayShader->UnBind();
+		m_ParticleShader->UnBind();
 		
-		
-
-
-
 
 		//material->UnBind();
 		camera->frameBuffer->Unbind();

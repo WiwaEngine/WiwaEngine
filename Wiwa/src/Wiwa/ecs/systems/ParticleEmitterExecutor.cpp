@@ -42,7 +42,6 @@ namespace Wiwa {
 		Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
 
 
-		int p_i = 0;
 		for (std::shared_ptr<ParticleBillboard> p : activeParticles)
 		{
 
@@ -51,20 +50,19 @@ namespace Wiwa {
 				p->vertices[i] = ref_vertices[i] + p->transform.position;
 			}
 
-			// Bind the VBO to a VAO
-			GLuint vao;
-			glGenVertexArrays(1, &vao);
-			glBindVertexArray(vao);
 
-			// VBO
-			GLuint vbo_pos;
-			glGenBuffers(1, &vbo_pos);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo_pos);
-			glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec3), p->vertices, GL_DYNAMIC_DRAW);		
+			GLuint VAO, VBO, EBO;
 
-			glBindBuffer(GL_ARRAY_BUFFER, vbo_pos);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-			glEnableVertexAttribArray(0);
+			//set mesh
+			glGenVertexArrays(1, &VAO);
+			glGenBuffers(1, &VBO);
+			glGenBuffers(1, &EBO);
+
+			glBindVertexArray(VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * sizeof(p->vertices), &p->vertices, GL_STATIC_DRAW);
+
 
 			std::vector<int> indices;
 			for (size_t i = 0; i < 6; i++)
@@ -72,12 +70,27 @@ namespace Wiwa {
 				indices.push_back(p->vertex_indices[i]);
 			}
 
-			r3d.RenderQuad(vao, indices, p->transform.position, p->transform.rotation, p->transform.scale, 
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+			// vertex positions
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+
+			glBindVertexArray(0);
+
+
+			r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.scale, 
 				lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true);
 
-			p_i++;
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &VBO);
+			glDeleteBuffers(1, &EBO);
+
+			//hacer ifs para las demas camaras
+
 		}
-		WI_CORE_INFO("test");
+		//WI_CORE_INFO("test");
 
 	}
 
@@ -104,6 +117,7 @@ namespace Wiwa {
 			p->vertex_indices[i] = ref_vertex_indices[i];
 		}
 
+		p->transform.scale = glm::vec3(1, 1, 1);
 		activeParticles.push_back(p);
 	}
 

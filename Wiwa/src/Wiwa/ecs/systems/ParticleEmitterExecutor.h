@@ -91,8 +91,8 @@ namespace Wiwa {
 
 		int ref_vertex_indices[6] =
 		{
-			0,1,2,
-			0,2,3
+			0,1,3,
+			0,3,2
 		};
 		
 	};

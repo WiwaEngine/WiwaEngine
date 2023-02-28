@@ -54,7 +54,7 @@ namespace Wiwa {
 		DefaultUnlitUniforms m_NDSUniforms;
 
 		ResourceId m_ParticleShaderId;
-		Shader* m_ParticleShaderShader;
+		Shader* m_ParticleShader;
 		DefaultUnlitUniforms m_ParticleUniforms;
 
 		Skybox m_DefaultSkybox;
