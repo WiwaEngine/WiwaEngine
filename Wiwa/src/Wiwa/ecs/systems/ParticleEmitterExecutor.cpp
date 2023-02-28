@@ -74,7 +74,7 @@ namespace Wiwa {
 			}
 
 			r3d.RenderQuad(vao, indices, p->transform.position, p->transform.rotation, p->transform.scale, 
-				lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), mat, false, man.editorCamera, true);
+				lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true);
 
 			i++;
 		}

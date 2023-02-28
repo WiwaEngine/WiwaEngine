@@ -53,6 +53,10 @@ namespace Wiwa {
 		Shader* m_NormalDisplayShader;
 		DefaultUnlitUniforms m_NDSUniforms;
 
+		ResourceId m_ParticleShaderId;
+		Shader* m_ParticleShaderShader;
+		DefaultUnlitUniforms m_ParticleUniforms;
+
 		Skybox m_DefaultSkybox;
 
 	public:
@@ -78,7 +82,7 @@ namespace Wiwa {
 			const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights, bool clear = false, Camera* camera = NULL, bool cull = false);
 		
 		void RenderQuad(unsigned int vao, std::vector<int> ebo_data, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, const size_t& directional,
-			const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights, Material* material, bool clear, Camera* camera, bool cull);
+			const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights/*, Material* material*/, bool clear, Camera* camera, bool cull);
 
 		void SetUpLight(Wiwa::Shader* matShader, Wiwa::Camera* camera, const size_t& directional, const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights);
 		

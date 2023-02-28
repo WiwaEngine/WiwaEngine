@@ -66,6 +66,13 @@ namespace Wiwa {
 		m_BBDSUniforms.View = m_BBDisplayShader->getUniformLocation("u_View");
 		m_BBDSUniforms.Projection = m_BBDisplayShader->getUniformLocation("u_Proj");
 
+		//Particle Shader ==> Temporal hasta materiales
+		m_ParticleShaderId = Resources::Load<Shader>("resources/shaders/debug/particle_display");
+		m_ParticleShaderShader = Resources::GetResourceById<Shader>(m_ParticleShaderId);
+		m_ParticleShaderShader->Compile("resources/shaders/debug/particle_display");
+		m_ParticleUniforms.Model = m_ParticleShaderShader->getUniformLocation("u_Model");
+		m_ParticleUniforms.View = m_ParticleShaderShader->getUniformLocation("u_View");
+		m_ParticleUniforms.Projection = m_ParticleShaderShader->getUniformLocation("u_Proj");
 
 		std::vector<const char*> faces = {
 			"resources/images/skybox/right.jpg",
@@ -308,7 +315,7 @@ namespace Wiwa {
 	}
 
 	void Renderer3D::RenderQuad(unsigned int vao, std::vector<int> ebo_data, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, const size_t& directional,
-		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights, Material* material, bool clear, Camera* camera, bool cull)
+		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights/*, Material* material*/, bool clear, Camera* camera, bool cull)
 	{
 		if (!camera)
 		{
@@ -325,44 +332,29 @@ namespace Wiwa {
 		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
 		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 		model = glm::scale(model, scale);
+		
+		/*
 		material->getShader()->Bind();
 		material->getShader()->SetMVP(model, camera->getView(), camera->getProjection());
+		*/
 
-		Shader* matShader = material->getShader();
+		Shader* matShader = m_ParticleShaderShader;
 		matShader->Bind();
 		matShader->SetMVP(model, camera->getView(), camera->getProjection());
 		SetUpLight(matShader, camera, directional, pointLights, spotLights);
-		material->Bind();
+		//material->Bind();
 
-
+		/*
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, (GLsizei)ebo_data.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+		*/
 
-		material->UnBind();
 
-		/*if (mesh->showNormals)
-		{
-			m_NormalDisplayShader->Bind();
-			m_NormalDisplayShader->setUniform(m_NDSUniforms.Model, transform);
-			m_NormalDisplayShader->setUniform(m_NDSUniforms.View, camera->getView());
-			m_NormalDisplayShader->setUniform(m_NDSUniforms.Projection, camera->getProjection());
 
-			mesh->Render();
-			m_NormalDisplayShader->UnBind();
-		}
-		if (camera->drawBoundingBoxes)
-		{
-			m_BBDisplayShader->Bind();
-			m_BBDisplayShader->setUniform(m_BBDSUniforms.Model, transform);
-			m_BBDisplayShader->setUniform(m_BBDSUniforms.View, camera->getView());
-			m_BBDisplayShader->setUniform(m_BBDSUniforms.Projection, camera->getProjection());
-			mesh->DrawBoudingBox();
-			m_BBDisplayShader->UnBind();
-		}*/
-
+		//material->UnBind();
 		camera->frameBuffer->Unbind();
-
+		
 	}
 
 	void Renderer3D::RenderSkybox()
