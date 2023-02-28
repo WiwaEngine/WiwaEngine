@@ -1,19 +1,12 @@
 #pragma once
 #pragma warning(disable : 4302)
 #include <Wiwa/core/Core.h>
-#include <Wiwa/utilities/math/Vector3f.h>
+#include <glm/glm.hpp>
 #include <Wiwa/utilities/Reflection.h>
-#include <Wiwa/core/Resources.h>
 
 namespace Wiwa {
 
-	struct WI_API Particle
-	{
-		
-	};
-
 	struct WI_API ParticleEmitter {
-		Particle* particleReference;
 		ResourceId materialId;
 		char mat_path[128];
 		glm::vec3 Position;
@@ -27,8 +20,6 @@ namespace Wiwa {
 }
 
 REFLECTION_BEGIN(Wiwa::ParticleEmitter)
-
-	REFLECT_MEMBER(particleReference)
 	REFLECT_MEMBER(Position)
 	REFLECT_MEMBER(Color)
 	REFLECT_MEMBER(lifeTime)

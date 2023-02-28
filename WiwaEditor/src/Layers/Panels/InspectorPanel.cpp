@@ -285,7 +285,7 @@ void InspectorPanel::DrawParticleComponent(byte* data) // -> temporal
 	
 	Wiwa::ParticleComponent* pComponent = (Wiwa::ParticleComponent*)data;
 
-	DrawVec3Control("Ambient Intensity", &pComponent->Position);
+	DrawVec3Control("Particle Position", &pComponent->Position);
 	ImGui::ColorEdit3("Color", glm::value_ptr(pComponent->Color));
 	ImGui::SliderFloat("Lifetime", &pComponent->lifeTime, 0.001f, 1.0f);
 	ImGui::SliderFloat("Speed", &pComponent->speed, 0.001f, 1.0f);
@@ -299,9 +299,8 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 {
 
 	Wiwa::ParticleEmitter* emitter = (Wiwa::ParticleEmitter*)data;
-	Wiwa::Particle* particleReference = emitter->particleReference;
 
-	DrawVec3Control("Ambient Intensity", &emitter->Position);
+	DrawVec3Control("Particle Position", &emitter->Position);
 	ImGui::ColorEdit3("Color", glm::value_ptr(emitter->Color));
 	ImGui::SliderFloat("Lifetime", &emitter->lifeTime, 0.001f, 1.0f);
 	ImGui::SliderFloat("Speed", &emitter->speed, 0.001f, 1.0f);
