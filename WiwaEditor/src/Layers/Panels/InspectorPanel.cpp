@@ -299,6 +299,7 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 {
 
 	Wiwa::ParticleEmitter* emitter = (Wiwa::ParticleEmitter*)data;
+	//Wiwa::Particle* particleReference = emitter->particleReference;
 
 	DrawVec3Control("Particle Position", &emitter->Position);
 	ImGui::ColorEdit3("Color", glm::value_ptr(emitter->Color));
@@ -310,30 +311,33 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 
 	//Draw materialId field
 	ImGui::Text("Material");
-	Wiwa::Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitter->materialId);
-	AssetContainer(std::filesystem::path(mat->getMaterialPath()).stem().string().c_str());
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+	//Wiwa::Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitter->materialId);
+	/*if (mat != NULL)
+	{*/
+		//AssetContainer(std::filesystem::path(mat->getMaterialPath()).stem().string().c_str());
+		if (ImGui::BeginDragDropTarget())
 		{
-			const wchar_t* path = (const wchar_t*)payload->Data;
-			std::wstring ws(path);
-			std::string pathS(ws.begin(), ws.end());
-			std::filesystem::path p = pathS.c_str();
-			if (p.extension() == ".wimaterial")
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
-				WI_INFO("Trying to load payload at path {0}", pathS.c_str());
-				emitter->materialId = Wiwa::Resources::Load<Wiwa::Material>(pathS.c_str());
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::wstring ws(path);
+				std::string pathS(ws.begin(), ws.end());
+				std::filesystem::path p = pathS.c_str();
+				if (p.extension() == ".wimaterial")
+				{
+					WI_INFO("Trying to load payload at path {0}", pathS.c_str());
+					emitter->materialId = Wiwa::Resources::Load<Wiwa::Material>(pathS.c_str());
+				}
 			}
-		}
 
-		ImGui::EndDragDropTarget();
+			ImGui::EndDragDropTarget();
+		//}
+		ImGui::PushID("materialId");
+		ImGui::Text("Material at: ");
+		ImGui::SameLine();
+		//ImGui::Text(mat->getMaterialPath());
+		ImGui::PopID();
 	}
-	ImGui::PushID("materialId");
-	ImGui::Text("Material at: ");
-	ImGui::SameLine();
-	ImGui::Text(mat->getMaterialPath());
-	ImGui::PopID();
 
 }
 
