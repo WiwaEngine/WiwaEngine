@@ -42,27 +42,26 @@ namespace Wiwa {
 		Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
 
 
-		int i = 0;
+		int p_i = 0;
 		for (std::shared_ptr<ParticleBillboard> p : activeParticles)
 		{
-
-			// VBO
-			GLuint vbo_pos;
-			glGenBuffers(1, &vbo_pos);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo_pos);
-			glBufferData(GL_ARRAY_BUFFER, activeParticles.size() * sizeof(glm::vec3), nullptr, GL_DYNAMIC_DRAW);
 
 			for (size_t i = 0; i < 4; i++)
 			{
 				p->vertices[i] = ref_vertices[i] + p->transform.position;
 			}
 
-			glUnmapBuffer(GL_ARRAY_BUFFER);
-
 			// Bind the VBO to a VAO
 			GLuint vao;
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
+
+			// VBO
+			GLuint vbo_pos;
+			glGenBuffers(1, &vbo_pos);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo_pos);
+			glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec3), p->vertices, GL_DYNAMIC_DRAW);		
+
 			glBindBuffer(GL_ARRAY_BUFFER, vbo_pos);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 			glEnableVertexAttribArray(0);
@@ -76,9 +75,9 @@ namespace Wiwa {
 			r3d.RenderQuad(vao, indices, p->transform.position, p->transform.rotation, p->transform.scale, 
 				lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true);
 
-			i++;
+			p_i++;
 		}
-		
+		WI_CORE_INFO("test");
 
 	}
 

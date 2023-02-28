@@ -58,10 +58,12 @@ namespace Wiwa {
 		m_NDSUniforms.Model = m_NormalDisplayShader->getUniformLocation("u_Model");
 		m_NDSUniforms.View = m_NormalDisplayShader->getUniformLocation("u_View");
 		m_NDSUniforms.Projection = m_NormalDisplayShader->getUniformLocation("u_Projection");
+
 		//Bounding box
 		m_BBDisplayShaderId = Resources::Load<Shader>("resources/shaders/debug/boundingbox_display");
 		m_BBDisplayShader = Resources::GetResourceById<Shader>(m_BBDisplayShaderId);
 		m_BBDisplayShader->Compile("resources/shaders/debug/boundingbox_display");
+
 		m_BBDSUniforms.Model = m_BBDisplayShader->getUniformLocation("u_Model");
 		m_BBDSUniforms.View = m_BBDisplayShader->getUniformLocation("u_View");
 		m_BBDSUniforms.Projection = m_BBDisplayShader->getUniformLocation("u_Proj");
@@ -70,6 +72,7 @@ namespace Wiwa {
 		m_ParticleShaderId = Resources::Load<Shader>("resources/shaders/debug/particle_display");
 		m_ParticleShaderShader = Resources::GetResourceById<Shader>(m_ParticleShaderId);
 		m_ParticleShaderShader->Compile("resources/shaders/debug/particle_display");
+
 		m_ParticleUniforms.Model = m_ParticleShaderShader->getUniformLocation("u_Model");
 		m_ParticleUniforms.View = m_ParticleShaderShader->getUniformLocation("u_View");
 		m_ParticleUniforms.Projection = m_ParticleShaderShader->getUniformLocation("u_Proj");
@@ -338,17 +341,27 @@ namespace Wiwa {
 		material->getShader()->SetMVP(model, camera->getView(), camera->getProjection());
 		*/
 
-		Shader* matShader = m_ParticleShaderShader;
-		matShader->Bind();
-		matShader->SetMVP(model, camera->getView(), camera->getProjection());
-		SetUpLight(matShader, camera, directional, pointLights, spotLights);
-		//material->Bind();
+		//Shader* matShader = m_ParticleShaderShader;
+		//matShader->Bind();
+		//matShader->SetMVP(model, camera->getView(), camera->getProjection());
+		//SetUpLight(matShader, camera, directional, pointLights, spotLights);
+		////material->Bind();
 
-		/*
+
+		m_ParticleShaderShader->Bind();
+		m_ParticleShaderShader->setUniform(m_ParticleUniforms.Model, model);
+		m_ParticleShaderShader->setUniform(m_ParticleUniforms.View, camera->getView());
+		m_ParticleShaderShader->setUniform(m_ParticleUniforms.Projection, camera->getProjection());
+
+		//make the drawing
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, (GLsizei)ebo_data.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, ebo_data.size(), GL_INT, 0);
 		glBindVertexArray(0);
-		*/
+
+		m_BBDisplayShader->UnBind();
+		
+		
+
 
 
 
