@@ -40,7 +40,8 @@ namespace Wiwa {
 		EntityManager& GetEntityManager() { return m_EntityManager; }
 		CameraManager& GetCameraManager() { return *m_CameraManager; }
 		LightManager& GetLightManager() { return *m_LightManager; }
-		ParticleManager& GetParticleManager() { return *m_ParticleManager; }
+		ParticleManager& GetParticleManager() { 
+			return *m_ParticleManager; } // --> temporal
 
 		inline const char* getName() { return m_Name.c_str(); }
 		inline void ChangeName(const char* name) { m_Name = name; }

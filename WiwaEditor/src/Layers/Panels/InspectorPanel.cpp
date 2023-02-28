@@ -15,6 +15,7 @@
 #include <Wiwa/ecs/components/PointLight.h>
 #include <Wiwa/ecs/components/SpotLight.h>
 #include <Wiwa/ecs/components/DirectionalLight.h>
+#include <Wiwa/ecs/components/ParticleEmitter.h>
 
 
 bool InspectorPanel::DrawComponent(size_t componentId)
@@ -48,7 +49,8 @@ bool InspectorPanel::DrawComponent(size_t componentId)
 		if (type->hash == (size_t)TypeHash::PointLight) { DrawPointLightComponent(data); } else
 		if (type->hash == (size_t)TypeHash::DirectionalLight) { DrawDirectionalLightComponent(data); } else
 		if (type->hash == (size_t)TypeHash::SpotLight) { DrawSpotLightComponent(data); } else
-		if (type->hash == (size_t)TypeHash::ParticleComponent) { DrawParticleComponent(data); } else
+		//if (type->hash == (size_t)TypeHash::ParticleComponent) { DrawParticleComponent(data); } else // -> temporal
+		if (type->hash == (size_t)TypeHash::ParticleEmitter) { DrawParticleEmitterComponent(data); }else
 			
 		// Basic component interface
 		if (type->is_class) {
@@ -278,7 +280,7 @@ void InspectorPanel::DrawSpotLightComponent(byte* data)
 	ImGui::InputFloat("Cutoff", &lsrc->Cutoff);
 }
 
-void InspectorPanel::DrawParticleComponent(byte* data)
+void InspectorPanel::DrawParticleComponent(byte* data) // -> temporal
 {
 	
 	Wiwa::ParticleComponent* pComponent = (Wiwa::ParticleComponent*)data;
@@ -290,6 +292,49 @@ void InspectorPanel::DrawParticleComponent(byte* data)
 	ImGui::SliderFloat("Size", &pComponent->size, 0.001f, 1.0f);
 	ImGui::SliderFloat("Direction Variation", &pComponent->directionVariation, 0.001f, 1.0f);
 	ImGui::SliderFloat("Distance to Camera", &pComponent->distanceToCamera, 0.001f, 1.0f);
+
+}
+
+void InspectorPanel::DrawParticleEmitterComponent(byte* data)
+{
+
+	Wiwa::ParticleEmitter* emitter = (Wiwa::ParticleEmitter*)data;
+	Wiwa::Particle* particleReference = emitter->particleReference;
+
+	DrawVec3Control("Ambient Intensity", &emitter->Position);
+	ImGui::ColorEdit3("Color", glm::value_ptr(emitter->Color));
+	ImGui::SliderFloat("Lifetime", &emitter->lifeTime, 0.001f, 1.0f);
+	ImGui::SliderFloat("Speed", &emitter->speed, 0.001f, 1.0f);
+	ImGui::SliderFloat("Size", &emitter->size, 0.001f, 1.0f);
+	ImGui::SliderFloat("Direction Variation", &emitter->directionVariation, 0.001f, 1.0f);
+	ImGui::SliderFloat("Distance to Camera", &emitter->distanceToCamera, 0.001f, 1.0f);
+
+	//Draw materialId field
+	ImGui::Text("Material");
+	Wiwa::Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitter->materialId);
+	AssetContainer(std::filesystem::path(mat->getMaterialPath()).stem().string().c_str());
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+		{
+			const wchar_t* path = (const wchar_t*)payload->Data;
+			std::wstring ws(path);
+			std::string pathS(ws.begin(), ws.end());
+			std::filesystem::path p = pathS.c_str();
+			if (p.extension() == ".wimaterial")
+			{
+				WI_INFO("Trying to load payload at path {0}", pathS.c_str());
+				emitter->materialId = Wiwa::Resources::Load<Wiwa::Material>(pathS.c_str());
+			}
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+	ImGui::PushID("materialId");
+	ImGui::Text("Material at: ");
+	ImGui::SameLine();
+	ImGui::Text(mat->getMaterialPath());
+	ImGui::PopID();
 
 }
 

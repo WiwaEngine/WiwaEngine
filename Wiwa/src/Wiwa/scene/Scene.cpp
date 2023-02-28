@@ -13,14 +13,14 @@ namespace Wiwa {
 		mMaxTimeLeaving = 0;
 		m_CameraManager = new CameraManager();
 		m_LightManager = new LightManager();
-		m_ParticleManager = new ParticleManager();
+		//m_ParticleManager = new ParticleManager(); // ->temporal
 	}
 
 	Scene::~Scene()
 	{
 		delete m_CameraManager;
 		delete m_LightManager;
-		delete m_ParticleManager;
+		//delete m_ParticleManager;// ->temporal
 	}
 
 	void Scene::Start()

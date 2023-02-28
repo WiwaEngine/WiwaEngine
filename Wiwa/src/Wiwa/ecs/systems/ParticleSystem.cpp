@@ -108,8 +108,8 @@ namespace Wiwa {
 
 		//------------------------------------------------------------------------------
 		Wiwa::EntityManager& entityManager = m_Scene->GetEntityManager();
-		const char* e_name = entityManager.GetEntityName(m_EntityId);
-		WI_INFO("Init particles: {}", e_name);
+		//const char* e_name = entityManager.GetEntityName(m_EntityId);
+		//WI_INFO("Init particles: {}", e_name);
 
 		ParticleManager& particleManager = m_Scene->GetParticleManager();
 

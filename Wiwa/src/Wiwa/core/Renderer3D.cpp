@@ -277,7 +277,7 @@ namespace Wiwa {
 		matShader->SetMVP(transform, camera->getView(), camera->getProjection());
 
 		SetUpLight(matShader, camera, directional, pointLights, spotLights);
-
+		
 		material->Bind();
 
 		mesh->Render();
@@ -306,6 +306,65 @@ namespace Wiwa {
 
 		camera->frameBuffer->Unbind();
 	}
+
+	void Renderer3D::RenderQuad(unsigned int vao, std::vector<int> ebo_data, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, const size_t& directional,
+		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights, Material* material, bool clear, Camera* camera, bool cull)
+	{
+		if (!camera)
+		{
+			camera = SceneManager::getActiveScene()->GetCameraManager().getActiveCamera();
+		}
+
+		glViewport(0, 0, camera->frameBuffer->getWidth(), camera->frameBuffer->getHeight());
+
+		camera->frameBuffer->Bind(clear);
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, position);
+		model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+		model = glm::scale(model, scale);
+		material->getShader()->Bind();
+		material->getShader()->SetMVP(model, camera->getView(), camera->getProjection());
+
+		Shader* matShader = material->getShader();
+		matShader->Bind();
+		matShader->SetMVP(model, camera->getView(), camera->getProjection());
+		SetUpLight(matShader, camera, directional, pointLights, spotLights);
+		material->Bind();
+
+
+		glBindVertexArray(vao);
+		glDrawElements(GL_TRIANGLES, (GLsizei)ebo_data.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		material->UnBind();
+
+		/*if (mesh->showNormals)
+		{
+			m_NormalDisplayShader->Bind();
+			m_NormalDisplayShader->setUniform(m_NDSUniforms.Model, transform);
+			m_NormalDisplayShader->setUniform(m_NDSUniforms.View, camera->getView());
+			m_NormalDisplayShader->setUniform(m_NDSUniforms.Projection, camera->getProjection());
+
+			mesh->Render();
+			m_NormalDisplayShader->UnBind();
+		}
+		if (camera->drawBoundingBoxes)
+		{
+			m_BBDisplayShader->Bind();
+			m_BBDisplayShader->setUniform(m_BBDSUniforms.Model, transform);
+			m_BBDisplayShader->setUniform(m_BBDSUniforms.View, camera->getView());
+			m_BBDisplayShader->setUniform(m_BBDSUniforms.Projection, camera->getProjection());
+			mesh->DrawBoudingBox();
+			m_BBDisplayShader->UnBind();
+		}*/
+
+		camera->frameBuffer->Unbind();
+
+	}
+
 	void Renderer3D::RenderSkybox()
 	{
 		{

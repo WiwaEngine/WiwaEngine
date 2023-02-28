@@ -245,5 +245,6 @@ enum class TypeHash : size_t {
 	PointLight = FNV1A_HASH("PointLight"),
 	DirectionalLight = FNV1A_HASH("DirectionalLight"),
 	SpotLight = FNV1A_HASH("SpotLight"),
-	ParticleComponent = FNV1A_HASH("ParticleComponent")
+	ParticleComponent = FNV1A_HASH("ParticleComponent"), //-> temporal
+	ParticleEmitter = FNV1A_HASH("Particle Emitter")
 };
