@@ -23,7 +23,7 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::OnAwake()
 	{
-		
+
 	}
 
 	void ParticleEmitterExecutor::OnInit()
@@ -110,7 +110,7 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::OnSystemAdded() // Called when system added to the editor
 	{
-		
+
 	}
 
 	void ParticleEmitterExecutor::AddParticle()
@@ -132,55 +132,46 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::ScreenAlign()
 	{
-		/*
-		switch (billboard_alignment)
+		Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
+		CameraId cameraId;
+		cameraId = cm.getActiveCameraId();
+		Wiwa::Camera* cam = cm.getCamera(cameraId);
+		//cam->setFront(vector);
+
+		for (size_t i = 0; i < activeParticles.size(); i++)
 		{
-		case Billboarding_Alignment::SCREEN_ALIGNED:
-			ScreenAlign();
-			break;
-		case Billboarding_Alignment::WORLD_ALIGNED:
-			WorldAlign();
-			break;
-		case Billboarding_Alignment::AXIS_ALIGNED:
-			AxisAlign();
-			break;
-		default:
-			break;
+			glm::vec3 normal = (cam->getPosition() - glm::normalize(activeParticles.at(i).get()->transform.position));
+			glm::vec3 up = cam->getUp();
+			glm::vec3 right = glm::cross(normal, up);
+
+			glm::mat4 m4(1.0f); //Constructs the Identity Matrix
+			m4[3] = (glm::vec4(-right.x, -right.y, -right.z, 1.0f), glm::vec4(up.x, up.y, up.z, 1.0f), glm::vec4(normal.x, normal.y, normal.z, 1.0f));
+
+			//particleManager.setRotation(m4[3]);
+
+			//activeParticles.at(i).get()->setRoation((m4[3]), activeParticles.at(i).get()->transform.position, up);
+
+			activeParticles.at(i).get()->transform.localMatrix = activeParticles.at(i).get()->transform.localMatrix * m4;
 		}
-		*/
-		//-----------------------------------------------------------------------------------------------
-		/*
-		float3 normal = (App->camera->GetPosition() - this->transform->GetPosition()).Normalized();
-		float3 up = App->camera->GetCurrentCamera()->GetFrustum().Up();
-		float3 right = normal.Cross(up);
+	}
 
-		float3x3 mat = float3x3::identity;
-		mat.Set(-right.x, -right.y, -right.z, up.x, up.y, up.z, normal.x, normal.y, normal.z);
+	void ParticleBillboard::setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up)
+	{
+		//When particles start drawing in the screen we might need to adjust the formula
+		//billboardRotation = rot;
 
-		transform->SetRotation(mat.Inverted().ToEulerXYZ());
-		*/
-		//-----------------------------------------------------------------------------------------------
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(rot.x)) * cos(glm::radians(rot.y));
+		direction.y = sin(glm::radians(rot.y));
+		direction.z = sin(glm::radians(rot.x)) * cos(glm::radians(rot.y));
 
-		//The main goal here is to apply the alignment to the billboard of the particle
-		//(Moving the plain in the direction of the camera)
+		glm::vec3 front = glm::normalize(direction);
 
-		//Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
-		//CameraId cameraId;
-		//cameraId = cm.getActiveCameraId();
-		//Wiwa::Camera* cam = cm.getCamera(cameraId);
-		////cam->setFront(vector);
-		//Wiwa::EntityManager& entityManager = m_Scene->GetEntityManager();
-		//const char* e_name = entityManager.GetEntityName(m_EntityId);
-		//ParticleManager& particleManager = m_Scene->GetParticleManager();
+		//setFront({ front.x, front.y, front.z });
 
-		//glm::vec3 normal = (cam->getPosition() -  glm::normalize(particleManager.FindByEntityId(m_EntityId)->Billboard_));
-		//glm::vec3 up = cam->getUp();
-		//glm::vec3 right = glm::cross(normal, up);
+		//glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp);
 
-		//glm::mat4 m4(1.0f); //Constructs the Identity Matrix
-		//m4[3] = (glm::vec4(-right.x, -right.y, -right.z, 1.0f), glm::vec4(up.x, up.y, up.z, 1.0f), glm::vec4(normal.x, normal.y, normal.z, 1.0f));
-
-		//particleManager.setRotation(m4[3]);
+		glm::lookAt(pos, pos + front, up);
 	}
 
 	void ParticleEmitterExecutor::OnSystemRemoved() // Called when system removed to the editor

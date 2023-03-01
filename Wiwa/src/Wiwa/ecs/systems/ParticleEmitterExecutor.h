@@ -8,6 +8,7 @@
 
 #include <Wiwa/utilities/Reflection.h>
 
+class Camera;
 namespace Wiwa {
 
 	struct ParticleBillboard
@@ -17,6 +18,7 @@ namespace Wiwa {
 		int vertex_indices[6];
 		Transform3D transform;
 
+		void setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up);
 	};
 
 
@@ -46,6 +48,8 @@ namespace Wiwa {
 		void DeleteParticleSystem();
 
 		void AddParticle();
+
+		ParticleBillboard* setRotation(const glm::vec3 rot);
 
 		std::vector<std::shared_ptr<ParticleBillboard>> activeParticles;
 
