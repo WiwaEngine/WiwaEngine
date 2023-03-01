@@ -153,8 +153,10 @@ namespace Wiwa
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
 
+
 	private:
 		static Application *s_Instance;
+		std::unique_ptr<class PhysicsCommon>s_PhysicsCommon;
 	};
 
 	// To be defined in a client

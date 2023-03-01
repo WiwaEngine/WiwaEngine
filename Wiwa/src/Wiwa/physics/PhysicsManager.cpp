@@ -78,6 +78,7 @@ namespace Wiwa {
 		//m_World->stepSimulation(Wiwa::Time::GetDeltaTimeSeconds(), 6);
 		for (int i = 0; i < 6; i++)
 		{
+			// Update positions based on velocity
 			m_World->performDiscreteCollisionDetection();
 			ResolveContacts();
 		}

@@ -34,11 +34,14 @@ IncludeDirs["GLI"] = "%{wks.location}/Wiwa/vendor/gli/gli"
 IncludeDirs["Wwise"] = "%{wks.location}/Wiwa/vendor/Wwise/include"
 IncludeDirs["IconFontCppHeaders"] = "%{wks.location}/WiwaEditor/vendor/IconFontCppHeaders"
 IncludeDirs["bullet"] = "%{wks.location}/Wiwa/vendor/bullet/include"
+IncludeDirs["react3d"] = "%{wks.location}/Wiwa/vendor/react3d/include"
 
 LibraryDirs = {}
 LibraryDirs["mono"] = "%{wks.location}/Wiwa/vendor/mono/lib/%{cfg.buildcfg}"
 LibraryDirs["Wwise"] = "%{wks.location}/Wiwa/vendor/Wwise/lib/x64_vc170/Debug(StaticCRT)/lib/"
 LibraryDirs["bullet"] = "%{wks.location}/Wiwa/vendor/bullet/lib/"
+LibraryDirs["react3d_debug"] = "%{wks.location}/Wiwa/vendor/react3d/lib/debug/"
+LibraryDirs["react3d_release"] = "%{wks.location}/Wiwa/vendor/react3d/lib/release/"
 
 Library = {}
 Library["mono"] = "%{LibraryDirs.mono}/libmono-static-sgen.lib"
@@ -54,6 +57,8 @@ Library["bullet_linear_math_release"] = "%{LibraryDirs.bullet}/LinearMath_vs2010
 Library["bullet_collision_debug"] = "%{LibraryDirs.bullet}/BulletCollision_vs2010_x64_debug.lib"
 Library["bullet_dynamics_debug"] = "%{LibraryDirs.bullet}/BulletDynamics_vs2010_x64_debug.lib"
 Library["bullet_linear_math_debug"] = "%{LibraryDirs.bullet}/LinearMath_vs2010_x64_debug.lib"
+Library["react3d_physics_debug"] = "%{LibraryDirs.react3d_debug}/reactphysics3d.lib"
+Library["react3d_physics_release"] = "%{LibraryDirs.react3d_release}/reactphysics3d.lib"
 
 Library["WinSock"] = "Ws2_32.lib"
 Library["WinMM"] = "Winmm.lib"
