@@ -23,7 +23,6 @@ project "WiwaEditor"
 		"%{IncludeDirs.ImGuizmo}",
 		"%{IncludeDirs.filewatch}",
 		"%{IncludeDirs.IconFontCppHeaders}",
-		"%{IncludeDirs.bullet}",
 		"%{IncludeDirs.react3d}"
 	}
 

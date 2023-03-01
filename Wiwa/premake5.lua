@@ -38,7 +38,6 @@ project "Wiwa"
 		"%{IncludeDirs.ImGuizmo}",
 		"%{IncludeDirs.Wwise}",
 		"%{IncludeDirs.IconFontCppHeaders}",
-		"%{IncludeDirs.bullet}",
 		"%{IncludeDirs.react3d}"
 	}
 
@@ -100,9 +99,6 @@ project "Wiwa"
 		symbols "On"
 		links
 		{
-			"%{Library.bullet_dynamics_debug}",
-			"%{Library.bullet_collision_debug}",
-			"%{Library.bullet_linear_math_debug}",
 			"%{Library.react3d_physics_debug}"
 		}
 
@@ -114,9 +110,6 @@ project "Wiwa"
 		symbols "On"
 		links
 		{
-			"%{Library.bullet_dynamics_release}",
-			"%{Library.bullet_collision_release}",
-			"%{Library.bullet_linear_math_release}",
 			"%{Library.react3d_physics_release}"
 		}
 

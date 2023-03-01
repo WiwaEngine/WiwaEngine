@@ -14,6 +14,7 @@
 #include <Wiwa/utilities/Reflection.h>
 #include <Wiwa/utilities/math/Vector4f.h>
 #include <Wiwa/utilities/time/Time.h>
+#include <reactphysics3d/reactphysics3d.h>
 
 namespace Wiwa
 {
@@ -156,7 +157,7 @@ namespace Wiwa
 
 	private:
 		static Application *s_Instance;
-		std::unique_ptr<class PhysicsCommon>s_PhysicsCommon;
+		std::unique_ptr<reactphysics3d::PhysicsCommon>s_PhysicsCommon;
 	};
 
 	// To be defined in a client
