@@ -31,3 +31,13 @@ float GetMouseYDeltaIntr()
 {
 	return Wiwa::Input::GetMouseYDelta();
 }
+
+bool IsButtonPressedIntr(Wiwa::GamepadNum gamepad, Wiwa::KeyCode button)
+{
+	return Wiwa::Input::IsButtonPressed(gamepad, button);
+}
+
+float GetAxisIntr(Wiwa::GamepadNum gamepad, Wiwa::GamepadAxis axis)
+{
+	return Wiwa::Input::GetAxis(gamepad, axis);
+}

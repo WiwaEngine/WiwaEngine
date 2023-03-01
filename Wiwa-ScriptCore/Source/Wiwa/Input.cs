@@ -26,5 +26,13 @@
         {
             return InternalCalls.GetMouseYDeltaIntr();
         }
+        public static bool IsButtonPressed(Gamepad gamepad, KeyCode button)
+        {
+            return InternalCalls.IsButtonPressedIntr(gamepad, button);
+        }
+        public static float GetAxis(Gamepad gamepad, GamepadAxis axis)
+        {
+            return InternalCalls.GetAxisIntr(gamepad, axis);
+        }
     }
 }

@@ -40,6 +40,10 @@ namespace Wiwa
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float GetMouseYDeltaIntr();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool IsButtonPressedIntr(Gamepad gamepad, KeyCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float GetAxisIntr(Gamepad gamepad, GamepadAxis axis);
         #endregion
         #region Time
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
