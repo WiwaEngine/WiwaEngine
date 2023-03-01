@@ -48,7 +48,6 @@ namespace Wiwa {
 
 		ColliderCube* cube = GetComponent<ColliderCube>();
 		ColliderSphere* sphere = GetComponent<ColliderSphere>();
-		ColliderCylinder* cylinder = GetComponent<ColliderCylinder>();
 		ColliderCapsule* capsule = GetComponent<ColliderCapsule>();
 
 		Mesh* mesh = GetComponent<Mesh>();
@@ -70,10 +69,6 @@ namespace Wiwa {
 			{
 				physicsManager.AddBodySphere(m_EntityId, *sphere, *transform, *rb);
 			}
-			else if (cylinder)
-			{
-				physicsManager.AddBodyCylinder(m_EntityId, *cylinder, *transform, *rb);
-			}
 			else if (capsule)
 			{
 				physicsManager.AddBodyCapsule(m_EntityId, *capsule, *transform, *rb);
@@ -85,21 +80,21 @@ namespace Wiwa {
 		DeleteBody();
 	}
 
-	void PhysicsSystem::OnCollisionEnter(MyObject* body1, MyObject* body2)
+	void PhysicsSystem::OnCollisionEnter(Object* body1, Object* body2)
 	{
 		Wiwa::EntityManager& entityManager = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 		const char* e_name = entityManager.GetEntityName(body1->id);
 		WI_INFO("Collision enter of --> {}", e_name);
 	}
 
-	void PhysicsSystem::OnCollision(MyObject* body1, MyObject* body2)
+	void PhysicsSystem::OnCollision(Object* body1, Object* body2)
 	{
 		Wiwa::EntityManager& entityManager = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 		const char* e_name = entityManager.GetEntityName(body1->id);
 		WI_INFO("Collision continuwus of --> {}", e_name);
 	}
 
-	void PhysicsSystem::OnCollisionLeave(MyObject* body1, MyObject* body2)
+	void PhysicsSystem::OnCollisionLeave(Object* body1, Object* body2)
 	{
 		Wiwa::EntityManager& entityManager = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 		const char* e_name = entityManager.GetEntityName(body1->id);
@@ -110,7 +105,7 @@ namespace Wiwa {
 	{
 		PhysicsManager& physicsManager = m_Scene->GetPhysicsManager();
 
-		MyObject* body = physicsManager.FindByEntityId(m_EntityId);
+		Object* body = physicsManager.FindByEntityId(m_EntityId);
 
 		if (body != nullptr)
 			physicsManager.DeleteBody(body);

@@ -12,8 +12,8 @@
 #include <Wiwa/utilities/render/shaders/Shader.h>
 #include <Wiwa/utilities/render/Uniforms.h>
 #include <Wiwa/core/Resources.h>
+#include <reactphysics3d/reactphysics3d.h>
 
-#include <btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
 
 #include <vector>
@@ -22,15 +22,33 @@
 
 #define MAX_BITS 32
 // Recommended scale is 1.0f == 1 meter, no less than 0.2 objects
-#define GRAVITY btVector3(0.0f, -10.0f, 0.0f)
-class DebugDrawer;
+#define GRAVITY glm::vec3(0.0f, -10.0f, 0.0f)
 class Camera;
+
+using namespace reactphysics3d;
+
+// Your event listener class
+class CustomEventListener : public EventListener {
+
+	/// Called when some contacts occur
+		/**
+		 * @param callbackData Contains information about all the contacts
+		 */
+	void onContact(const CollisionCallback::CallbackData& callbackData);
+
+	/// Called when some trigger events occur
+	/**
+	 * @param callbackData Contains information about all the triggers that are colliding
+	 */
+	void onTrigger(const OverlapCallback::CallbackData& callbackData);
+};
+
 namespace Wiwa {
 
-	struct MyObject {
-		MyObject(btCollisionObject& body_, const size_t id_) : m_CollisionObject(&body_), id(id_) {};
+	struct Object {
+		Object(RigidBody& body_, const size_t id_) : m_RigidBody(&body_), id(id_) {};
 
-		btCollisionObject* m_CollisionObject;
+		RigidBody* m_RigidBody;
 		size_t id;
 	};
 
@@ -59,39 +77,22 @@ namespace Wiwa {
 
 		bool StepSimulation();
 
-		bool ResolveContacts();
-
 		bool UpdateEngineToPhysics();
 
 		bool UpdatePhysicsToEngine();
 
 		bool CleanWorld();
 
-		bool DeleteBody(MyObject* body);
+		bool DeleteBody(Object* body);
 
 		// Add bodies
 		bool AddBodySphere(size_t id, const Wiwa::ColliderSphere& sphere, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body);
 
 		bool AddBodyCube(size_t id, const Wiwa::ColliderCube& cube, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body);
 
-		bool AddBodyCylinder(size_t id, const Wiwa::ColliderCylinder& cylinder, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body);
-
 		bool AddBodyCapsule(size_t id, const Wiwa::ColliderCapsule& capsule, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body);
 
-		// Manipulate bodies
-		//void SetBodyMass(MyObject* body, const float mass);
-
-		//void SetBodyGravity(MyObject* body, const btVector3 gravity);
-
-		//void SetTrigger(MyObject* body, const bool isTrigger);
-
-		//void SetStatic(MyObject* body, const bool isStatic);
-
-		MyObject* FindByEntityId(size_t id);
-
-		//void ManipulateBody(MyObject* body, const btVector3& vector);
-
-		void UpdateCollisionType(size_t first, size_t second);
+		Object* FindByEntityId(size_t id);
 
 		bool OnSave();
 
@@ -101,6 +102,8 @@ namespace Wiwa {
 
 		void DebugDrawWorld();
 
+		void DrawLine(const reactphysics3d::Vector3& from, const reactphysics3d::Vector3& to/*, const reactphysics3d::Vector3& color*/);
+
 		bool AddFilterTag(const char* str);
 		
 		void RemoveFilterTag(const int index);
@@ -108,31 +111,18 @@ namespace Wiwa {
 	private:
 		bool m_Debug;
 		bool m_HasBeenInit;
-		btCollisionWorld* m_World;
+		long double accumulator = 0.0;
 
-		btDefaultCollisionConfiguration* m_Collision_conf;
-		btCollisionDispatcher* m_Dispatcher;
-		btBroadphaseInterface* m_Broad_phase;
-		btSequentialImpulseConstraintSolver* m_Solver;
+		PhysicsWorld* m_World;
+		CustomEventListener m_CollisionListener;
 
-		btOverlapFilterCallback* m_filterCallback;
-
-		//  btDefaultVehicleRaycaster* v_Vehicle_raycaster;
-		DebugDrawer* m_Debug_draw;
-
-		std::list<btCollisionShape*> m_Shapes;
-		std::list<MyObject*> m_CollObjects;
-		//std::list<btDefaultMotionState*> m_Motions;
-		std::list<btTypedConstraint*> m_Constraints;
-
-		std::vector<CollisionData> m_CollisionList;
-
+		std::list<Object*> m_Bodies;
 	private:
-		std::list<MyObject*> m_BodiesToLog;
+		std::list<Object*> m_BodiesToLog;
 
 	public:
-		bool AddBodyToLog(MyObject* body_to_log);
-		bool RemoveBodyFromLog(MyObject* body_to_log);
+		bool AddBodyToLog(Object* body_to_log);
+		bool RemoveBodyFromLog(Object* body_to_log);
 		bool LogBodies();
 
 	public:
@@ -146,41 +136,27 @@ namespace Wiwa {
 
 			WI_INFO("{}", n & 1);
 		}
+
+		ResourceId lineDisplayShaderId;
+		Wiwa::Shader* lineDisplayShader;
+		DefaultUnlitUniforms lineDisplayShaderUniforms;
 	};
 }
 
-// write your own collision group / mask functionality using broadphase callbacks rather than use Bullet's
-struct CustomFilterCallBack : public btOverlapFilterCallback
+void ToEulerAngles(const Quaternion& q, glm::vec3& angles)
 {
-	// return true when pairs need collision
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
-	{
-		bool collides = (proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
-		collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
+	// roll (x-axis rotation)
+	double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+	double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+	angles.x = std::atan2(sinr_cosp, cosr_cosp);
 
-		//add some additional logic here that modified 'collides'
+	// pitch (y-axis rotation)
+	double sinp = std::sqrt(1 + 2 * (q.w * q.y - q.x * q.z));
+	double cosp = std::sqrt(1 - 2 * (q.w * q.y - q.x * q.z));
+	angles.y = 2 * std::atan2(sinp, cosp) - PI_F / 2;
 
-
-		return true;
-	}
-};
-
-class DebugDrawer : public btIDebugDraw
-{
-public:
-	DebugDrawer()
-	{}
-
-	void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
-	void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
-	void reportErrorWarning(const char* warningString);
-	void draw3dText(const btVector3& location, const char* textString);
-	void setDebugMode(int debugMode);
-	int	 getDebugMode() const;
-
-	DebugDrawModes mode;
-
-	ResourceId lineDisplayShaderId;
-	Wiwa::Shader* lineDisplayShader;
-	DefaultUnlitUniforms lineDisplayShaderUniforms;
-};
+	// yaw (z-axis rotation)
+	double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+	double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+	angles.z = std::atan2(siny_cosp, cosy_cosp);
+}

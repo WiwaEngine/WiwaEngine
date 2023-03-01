@@ -6,6 +6,7 @@
 #include <Wiwa/utilities/Reflection.h>
 
 namespace Wiwa {
+	struct Object;
 	class WI_API PhysicsSystem : public System {
 	private:
 
@@ -25,9 +26,9 @@ namespace Wiwa {
 
 		void OnSystemRemoved() override;
 
-		void OnCollisionEnter(MyObject* body1, MyObject* body2) override;
-		void OnCollision(MyObject* body1, MyObject* body2) override;
-		void OnCollisionLeave(MyObject* body1, MyObject* body2) override;
+		void OnCollisionEnter(Object* body1, Object* body2) override;
+		void OnCollision(Object* body1, Object* body2) override;
+		void OnCollisionLeave(Object* body1, Object* body2) override;
 
 	private:
 

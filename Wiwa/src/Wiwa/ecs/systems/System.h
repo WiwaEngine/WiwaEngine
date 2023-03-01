@@ -5,7 +5,7 @@
 #include <Wiwa/scene/SceneManager.h>
 
 namespace Wiwa {
-	struct MyObject;
+	struct Object;
 	class WI_API System {
 	private:
 
@@ -44,11 +44,11 @@ namespace Wiwa {
 		virtual void OnSystemRemoved() {}
 		
 		void Destroy();
-		virtual void OnCollisionEnter(MyObject* body1, MyObject* body2)
+		virtual void OnCollisionEnter(Object* body1, Object* body2)
 		{}
-		virtual void OnCollision(MyObject* body1, MyObject* body2)
+		virtual void OnCollision(Object* body1, Object* body2)
 		{}
-		virtual void OnCollisionLeave(MyObject* body1, MyObject* body2)
+		virtual void OnCollisionLeave(Object* body1, Object* body2)
 		{}
 
 		virtual bool OnComponentAdded(byte* data, const Type* type) { return true; }
