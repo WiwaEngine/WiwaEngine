@@ -60,7 +60,7 @@ namespace Wiwa
 		void SetHwInfo();
 
 		inline static Application &Get() { return *s_Instance; }
-		inline PhysicsCommon &GetPhysics() { return *s_PhysicsCommon; }
+		inline reactphysics3d::PhysicsCommon &GetPhysics() { return *s_PhysicsCommon; }
 
 		inline int GetArgC() { return m_ArgC; }
 		inline const char* GetArgv(int index) { return m_Argv[index].c_str(); }

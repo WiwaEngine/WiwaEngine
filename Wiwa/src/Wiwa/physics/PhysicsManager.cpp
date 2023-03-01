@@ -197,6 +197,10 @@ namespace Wiwa {
 
 		// Create a rigid body in the world
 		RigidBody* body = m_World->createRigidBody(transformReact);
+
+		m_Bodies.emplace_back(new Object(*body, id));
+		body->setUserData((Object*)*m_Bodies.end());
+
 		body->setMass(rigid_body.mass);
 		if (rigid_body.isStatic)
 			body->setType(BodyType::STATIC);// Change the type of the body to kinematic
@@ -231,6 +235,10 @@ namespace Wiwa {
 
 		// Create a rigid body in the world
 		RigidBody* body = m_World->createRigidBody(transformReact);
+
+		m_Bodies.emplace_back(new Object(*body, id));
+		body->setUserData((Object*)*m_Bodies.end());
+
 		body->setMass(rigid_body.mass);
 		if (rigid_body.isStatic)
 			body->setType(BodyType::STATIC);// Change the type of the body to kinematic
@@ -267,6 +275,10 @@ namespace Wiwa {
 
 		// Create a rigid body in the world
 		RigidBody* body = m_World->createRigidBody(transformReact);
+
+		m_Bodies.emplace_back(new Object(*body, id));
+		body->setUserData((Object*)*m_Bodies.end());
+
 		body->setMass(rigid_body.mass);
 		if (rigid_body.isStatic)
 			body->setType(BodyType::STATIC);// Change the type of the body to kinematic
