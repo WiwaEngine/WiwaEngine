@@ -55,7 +55,7 @@ namespace Wiwa {
 
 		void OnSystemRemoved() override;
 
-		void ScreenAlign();
+		void ScreenAlign(std::shared_ptr<ParticleBillboard> particle);
 
 	private:
 

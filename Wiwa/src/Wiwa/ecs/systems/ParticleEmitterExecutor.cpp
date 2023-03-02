@@ -64,7 +64,7 @@ namespace Wiwa {
 			}
 
 		}
-		//UpdateParticles();
+		UpdateParticles();
 	}
 
 	void ParticleEmitterExecutor::OnDestroy()
@@ -94,11 +94,13 @@ namespace Wiwa {
 				p->velocity += p->acceleration * dt;
 
 
-				p->vertices[i] = ref_vertices[i] + p->transform.position;
+				p->vertices[i] = ref_vertices[i] + p->transform.localPosition;
 
 				//emitterComp->position
 			}
 
+			ScreenAlign(p);
+			
 			//draw particles
 			{
 
@@ -271,29 +273,38 @@ namespace Wiwa {
 		}
 	}
 
-	void ParticleEmitterExecutor::ScreenAlign()
+	void ParticleEmitterExecutor::ScreenAlign(std::shared_ptr<ParticleBillboard> particle)
 	{
 		Wiwa::CameraManager& cm = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
 		CameraId cameraId;
 		cameraId = cm.getActiveCameraId();
 		Wiwa::Camera* cam = cm.getCamera(cameraId);
 		//cam->setFront(vector);
+	
+		glm::vec3 normal = (cam->getPosition() - glm::normalize(particle->transform.localPosition));
+		glm::vec3 up = cam->getUp();
+		glm::vec3 right = glm::cross(normal, up);
 
-		for (size_t i = 0; i < activeParticles.size(); i++)
-		{
-			glm::vec3 normal = (cam->getPosition() - glm::normalize(activeParticles.at(i).get()->transform.position));
-			glm::vec3 up = cam->getUp();
-			glm::vec3 right = glm::cross(normal, up);
+		glm::mat4 m4(1.0f); //Constructs the Identity Matrix
+		m4[3] = (glm::vec4(-right.x, -right.y, -right.z, 1.0f), glm::vec4(up.x, up.y, up.z, 1.0f), glm::vec4(normal.x, normal.y, normal.z, 1.0f));
 
-			glm::mat4 m4(1.0f); //Constructs the Identity Matrix
-			m4[3] = (glm::vec4(-right.x, -right.y, -right.z, 1.0f), glm::vec4(up.x, up.y, up.z, 1.0f), glm::vec4(normal.x, normal.y, normal.z, 1.0f));
+		//particleManager.setRotation(m4[3]);
 
-			//particleManager.setRotation(m4[3]);
+		//activeParticles.at(i).get()->setRoation((m4[3]), activeParticles.at(i).get()->transform.position, up);
 
-			//activeParticles.at(i).get()->setRoation((m4[3]), activeParticles.at(i).get()->transform.position, up);
+		particle->transform.localMatrix = particle->transform.localMatrix * m4;
 
-			activeParticles.at(i).get()->transform.localMatrix = activeParticles.at(i).get()->transform.localMatrix * m4;
-		}
+		/*
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::vec3 scaling;
+		glm::quat rotation;
+		glm::vec3 translation;
+		glm::decompose(particle->transform.worldMatrix, scaling, rotation, translation, skew, perspective);
+		particle->transform.position = translation;
+		glm::vec3 eulerAnglesRadians = glm::eulerAngles(rotation);
+		particle->transform.rotation = glm::degrees(eulerAnglesRadians);
+		*/
 	}
 
 	void ParticleBillboard::setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up)
