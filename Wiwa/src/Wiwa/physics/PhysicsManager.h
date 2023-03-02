@@ -113,6 +113,7 @@ namespace Wiwa {
 		bool m_HasBeenInit;
 		long double accumulator = 0.0;
 
+		reactphysics3d::PhysicsCommon m_PhysicsCommon;
 		PhysicsWorld* m_World;
 		CustomEventListener m_CollisionListener;
 
@@ -141,22 +142,17 @@ namespace Wiwa {
 		Wiwa::Shader* lineDisplayShader;
 		DefaultUnlitUniforms lineDisplayShaderUniforms;
 	};
+
+	/*class MyMemory : public reactphysics3d::MemoryAllocator
+	{
+		/// Allocate memory of a given size (in bytes) and return a pointer to the
+		/// allocated memory.
+		void* allocate(size_t size) override;
+
+		/// Release previously allocated memory.
+		void release(void* pointer, size_t size) override;
+	};*/
+
+	void ToEulerAngles(const reactphysics3d::Quaternion& q, glm::vec3& angles);
 }
 
-void ToEulerAngles(const Quaternion& q, glm::vec3& angles)
-{
-	// roll (x-axis rotation)
-	double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-	double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-	angles.x = std::atan2(sinr_cosp, cosr_cosp);
-
-	// pitch (y-axis rotation)
-	double sinp = std::sqrt(1 + 2 * (q.w * q.y - q.x * q.z));
-	double cosp = std::sqrt(1 - 2 * (q.w * q.y - q.x * q.z));
-	angles.y = 2 * std::atan2(sinp, cosp) - PI_F / 2;
-
-	// yaw (z-axis rotation)
-	double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-	double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-	angles.z = std::atan2(siny_cosp, cosy_cosp);
-}

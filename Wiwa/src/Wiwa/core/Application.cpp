@@ -89,7 +89,7 @@ namespace Wiwa {
 
 		m_RenderColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 
-		s_PhysicsCommon = std::make_unique<reactphysics3d::PhysicsCommon>();
+		//s_PhysicsCommon = std::make_unique<reactphysics3d::PhysicsCommon>();
 
 		RenderManager::Init(m_TargetResolution.w, m_TargetResolution.h);
 

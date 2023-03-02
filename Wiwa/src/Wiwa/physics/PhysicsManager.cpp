@@ -15,6 +15,7 @@
 
 #include <Wiwa/utilities/json/JSONDocument.h>
 
+using namespace reactphysics3d;
 namespace Wiwa {
 	PhysicsManager::PhysicsManager()
 	{
@@ -27,6 +28,7 @@ namespace Wiwa {
 		lineDisplayShaderUniforms.Model = lineDisplayShader->getUniformLocation("u_Model");
 		lineDisplayShaderUniforms.View = lineDisplayShader->getUniformLocation("u_View");
 		lineDisplayShaderUniforms.Projection = lineDisplayShader->getUniformLocation("u_Proj");
+
 	}
 
 	PhysicsManager::~PhysicsManager()
@@ -44,19 +46,24 @@ namespace Wiwa {
 		settings.defaultVelocitySolverNbIterations = 20;
 		settings.isSleepingEnabled = false;
 		settings.gravity = Vector3(0, -10, 0);
-
-		PhysicsWorld* world = Application::Get().GetPhysics().createPhysicsWorld();
+		settings.worldName = "physical_world";
+		m_World = m_PhysicsCommon.createPhysicsWorld(settings);
 		// Change the number of iterations of the velocity solver
-		world->setNbIterationsVelocitySolver(15);
+		m_World->setNbIterationsVelocitySolver(15);
 		// Change the number of iterations of the position solver
-		world->setNbIterationsPositionSolver(8);
+		m_World->setNbIterationsPositionSolver(8);
 		// Register your event listener class
-		world->setEventListener(&m_CollisionListener);
+		m_World->setEventListener(&m_CollisionListener);
 		// Enable debug rendering
-		world->setIsDebugRenderingEnabled(true);
+		m_World->setIsDebugRenderingEnabled(true);
+		// Create a rigid body in the world
+		Vector3 position(0, 20, 0);
+		Quaternion orientation = Quaternion::identity();
+		Transform transform(position, orientation);
+		RigidBody* body = m_World->createRigidBody(transform);
 
 		// Get a reference to the debug renderer
-		DebugRenderer& debugRenderer = world->getDebugRenderer();
+		DebugRenderer& debugRenderer = m_World->getDebugRenderer();
 		// Select the contact points and contact normals to be
 		//displayed
 			debugRenderer.setIsDebugItemDisplayed(DebugRenderer ::
@@ -169,7 +176,7 @@ namespace Wiwa {
 		}
 		m_Bodies.clear();
 
-		Application::Get().GetPhysics().destroyPhysicsWorld(m_World);
+		m_PhysicsCommon.destroyPhysicsWorld(m_World);
 
 		m_HasBeenInit = false;
 		return true;
@@ -183,11 +190,11 @@ namespace Wiwa {
 
 	bool PhysicsManager::AddBodySphere(size_t id, const Wiwa::ColliderSphere& sphere, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body)
 	{
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::vec3 scaling;
-		glm::quat rotation;
-		glm::vec3 translation;
+		glm::vec3 skew(0.0f);
+		glm::vec4 perspective(0.0f);
+		glm::vec3 scaling(0.0f);
+		glm::quat rotation(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec3 translation(0.0f);
 		glm::decompose(transform.worldMatrix, scaling, rotation, translation, skew, perspective);
 
 		// Initial position and orientation of the rigid body
@@ -206,7 +213,7 @@ namespace Wiwa {
 			body->setType(BodyType::STATIC);// Change the type of the body to kinematic
 
 		// Create the sphere shape with a radius of 2m
-		SphereShape* sphereShape = Application::Get().GetPhysics().createSphereShape
+		SphereShape* sphereShape = m_PhysicsCommon.createSphereShape
 		(sphere.radius);
 
 		// Relative transform of the collider relative to the body
@@ -221,11 +228,11 @@ namespace Wiwa {
 
 	bool PhysicsManager::AddBodyCube(size_t id, const Wiwa::ColliderCube& cube, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body)
 	{
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::vec3 scaling;
-		glm::quat rotation;
-		glm::vec3 translation;
+		glm::vec3 skew(0.0f);
+		glm::vec4 perspective(0.0f);
+		glm::vec3 scaling(0.0f);
+		glm::quat rotation(0.0f,0.0f,0.0f,0.0f);
+		glm::vec3 translation(0.0f);
 		glm::decompose(transform.worldMatrix, scaling, rotation, translation, skew, perspective);
 
 		// Initial position and orientation of the rigid body
@@ -246,7 +253,7 @@ namespace Wiwa {
 		// Half extents of the box in the x, y and z directions
 		const Vector3 halfExtents(cube.halfExtents.x, cube.halfExtents.y, cube.halfExtents.z);
 		// Create the box shape
-		BoxShape* boxShape = Application::Get().GetPhysics().createBoxShape(
+		BoxShape* boxShape = m_PhysicsCommon.createBoxShape(
 			halfExtents);
 
 		// Relative transform of the collider relative to the body
@@ -261,11 +268,11 @@ namespace Wiwa {
 
 	bool PhysicsManager::AddBodyCapsule(size_t id, const Wiwa::ColliderCapsule& capsule, Wiwa::Transform3D& transform, Wiwa::Rigidbody& rigid_body)
 	{
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::vec3 scaling;
-		glm::quat rotation;
-		glm::vec3 translation;
+		glm::vec3 skew(0.0f);
+		glm::vec4 perspective(0.0f);
+		glm::vec3 scaling(0.0f);
+		glm::quat rotation(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec3 translation(0.0f);
 		glm::decompose(transform.worldMatrix, scaling, rotation, translation, skew, perspective);
 
 		// Initial position and orientation of the rigid body
@@ -284,7 +291,7 @@ namespace Wiwa {
 			body->setType(BodyType::STATIC);// Change the type of the body to kinematic
 
 		// Create the capsule shape
-		CapsuleShape* capsuleShape = Application::Get().GetPhysics().createCapsuleShape(capsule.radius, capsule.height);
+		CapsuleShape* capsuleShape = m_PhysicsCommon.createCapsuleShape(capsule.radius, capsule.height);
 
 		// Relative transform of the collider relative to the body
 		//origin
@@ -441,6 +448,26 @@ namespace Wiwa {
 		}
 		return true;
 	}
+	void ToEulerAngles(const reactphysics3d::Quaternion& q, glm::vec3& angles)
+	{
+		{
+			// roll (x-axis rotation)
+			double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+			double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+			angles.x = std::atan2(sinr_cosp, cosr_cosp);
+
+			// pitch (y-axis rotation)
+			double sinp = std::sqrt(1 + 2 * (q.w * q.y - q.x * q.z));
+			double cosp = std::sqrt(1 - 2 * (q.w * q.y - q.x * q.z));
+			angles.y = 2 * std::atan2(sinp, cosp) - PI_F / 2;
+
+			// yaw (z-axis rotation)
+			double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+			double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+			angles.z = std::atan2(siny_cosp, cosy_cosp);
+		}
+	}
+
 }
 
 //void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
