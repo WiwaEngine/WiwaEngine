@@ -36,34 +36,37 @@ namespace Wiwa {
 	void ParticleEmitterExecutor::OnUpdate()
 	{
 
-		//ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
+		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
 
-		//float dt = Time::GetRealDeltaTime();
+		float dt = Time::GetRealDeltaTime() / 1000;
 
-		//if (emitter->repeat)
-		//{
-		//	WI_CORE_INFO("%f", timer);
+		if (emitter->repeat)
+		{
+			WI_CORE_INFO("%f", timer);
 
-		//	timer -= dt;
-		//}
-		//else
-		//	timer = 1; //-> substitute by delay
+			timer -= dt;
+		}
+		else
+			timer = 1; //-> substitute by delay
 
-		//if (timer <= 0)
-		//{
-		//	if (emitter->repeat)
-		//	{
-		//		if (emitter->particle_rate_isRanged)
-		//		{
-		//			timer = Wiwa::Math::RandomRange(emitter->particle_rate_range[0], emitter->particle_rate_range[1]);
-		//		}
-		//		else
-		//		{
-		//			timer = emitter->particle_rate;
-		//		}
-		//	}
+		if (timer <= 0)
+		{
+			if (emitter->repeat)
+			{
+				if (emitter->particle_rate_isRanged)
+				{
+					timer = Wiwa::Math::RandomRange(emitter->particle_rate_range[0], emitter->particle_rate_range[1]);
+				}
+				else
+				{
+					timer = emitter->particle_rate;
+				}
+			}
 
-		//}
+		}
+
+
+
 		UpdateParticles();
 	}
 
@@ -86,16 +89,32 @@ namespace Wiwa {
 		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
 		//Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
 
-		float dt = Time::GetDeltaTime();
+		float dt = Time::GetDeltaTime() / 1000;
+		timer -= dt;
+		std::string message = "timer: " + std::to_string(timer);
 
+		WI_CORE_INFO(message.c_str());
+
+		int p_count = 0;
 		for (std::shared_ptr<ParticleBillboard> p : activeParticles)
 		{
+			if (p->lifetime < 0)
+			{
+				//activeParticles.at(p_count)
+			}
+
+
 			//p->transform.localPosition.x += 0.001;
 			//update particles
 			for (size_t i = 0; i < 4; i++)
 			{
 				//update particle variables
-				/*p->velocity += p->acceleration * dt;*/
+				p->velocity += p->acceleration * dt;
+				glm::vec3 resultantPosition = p->velocity * dt;
+
+				p->transform.localPosition += resultantPosition;
+
+
 
 
 				p->vertices[i] = ref_vertices[i] + p->transform.localPosition;
@@ -162,7 +181,7 @@ namespace Wiwa {
 			}
 		}
 		////WI_CORE_INFO("test");
-		
+		p_count++;
 	}
 
 	void ParticleEmitterExecutor::OnSystemAdded() // Called when system added to the editor
