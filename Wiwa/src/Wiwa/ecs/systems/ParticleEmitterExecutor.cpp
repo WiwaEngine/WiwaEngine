@@ -36,34 +36,34 @@ namespace Wiwa {
 	void ParticleEmitterExecutor::OnUpdate()
 	{
 
-		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
+		//ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
 
-		float dt = Time::GetRealDeltaTime();
+		//float dt = Time::GetRealDeltaTime();
 
-		if (emitter->repeat)
-		{
-			WI_CORE_INFO("%f", timer);
+		//if (emitter->repeat)
+		//{
+		//	WI_CORE_INFO("%f", timer);
 
-			timer -= dt;
-		}
-		else
-			timer = 1; //-> substitute by delay
+		//	timer -= dt;
+		//}
+		//else
+		//	timer = 1; //-> substitute by delay
 
-		if (timer <= 0)
-		{
-			if (emitter->repeat)
-			{
-				if (emitter->particle_rate_isRanged)
-				{
-					timer = Wiwa::Math::RandomRange(emitter->particle_rate_range[0], emitter->particle_rate_range[1]);
-				}
-				else
-				{
-					timer = emitter->particle_rate;
-				}
-			}
+		//if (timer <= 0)
+		//{
+		//	if (emitter->repeat)
+		//	{
+		//		if (emitter->particle_rate_isRanged)
+		//		{
+		//			timer = Wiwa::Math::RandomRange(emitter->particle_rate_range[0], emitter->particle_rate_range[1]);
+		//		}
+		//		else
+		//		{
+		//			timer = emitter->particle_rate;
+		//		}
+		//	}
 
-		}
+		//}
 		UpdateParticles();
 	}
 
@@ -74,6 +74,9 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::UpdateParticles()
 	{
+
+		//WI_CORE_INFO("test");
+
 
 		Renderer3D& r3d = Application::Get().GetRenderer3D();
 		CameraManager& man = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
@@ -87,11 +90,12 @@ namespace Wiwa {
 
 		for (std::shared_ptr<ParticleBillboard> p : activeParticles)
 		{
+			//p->transform.localPosition.x += 0.001;
 			//update particles
 			for (size_t i = 0; i < 4; i++)
 			{
 				//update particle variables
-				p->velocity += p->acceleration * dt;
+				/*p->velocity += p->acceleration * dt;*/
 
 
 				p->vertices[i] = ref_vertices[i] + p->transform.localPosition;
@@ -99,8 +103,8 @@ namespace Wiwa {
 				//emitterComp->position
 			}
 
-			ScreenAlign(p);
-			
+
+				
 			//draw particles
 			{
 
@@ -157,8 +161,8 @@ namespace Wiwa {
 				glDeleteBuffers(1, &EBO);
 			}
 		}
-		//WI_CORE_INFO("test");
-
+		////WI_CORE_INFO("test");
+		
 	}
 
 	void ParticleEmitterExecutor::OnSystemAdded() // Called when system added to the editor
@@ -168,6 +172,20 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::AddParticles()
 	{
+
+		/*std::shared_ptr<ParticleBillboard> p = std::make_shared<ParticleBillboard>();
+		for (size_t i = 0; i < 4; i++)
+		{
+			p->vertices[i] = ref_vertices[i];
+			p->tex_coords[i] = ref_tex_coords[i];
+		}
+		for (size_t i = 0; i < 6; i++)
+		{
+			p->vertex_indices[i] = ref_vertex_indices[i];
+		}
+
+		p->transform.scale = glm::vec3(1, 1, 1);
+		activeParticles.push_back(p);*/
 
 		Transform3D* transform = GetComponent<Transform3D>();
 		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
@@ -256,11 +274,10 @@ namespace Wiwa {
 			p->followParticle = emitter->particle_followParticle;
 
 
-
 			//set geometry
 			for (size_t i = 0; i < 4; i++)
 			{
-				p->vertices[i] = ref_vertices[i] + p->originPosition;
+				p->vertices[i] = ref_vertices[i];
 				p->tex_coords[i] = ref_tex_coords[i];
 			}
 			for (size_t i = 0; i < 6; i++)
@@ -268,9 +285,13 @@ namespace Wiwa {
 				p->vertex_indices[i] = ref_vertex_indices[i];
 			}
 
+			p->transform.scale = glm::vec3(1, 1, 1);
 
-			activeParticles.push_back(p);
+			
 		}
+
+		
+		activeParticles.push_back(p);
 	}
 
 	void ParticleEmitterExecutor::ScreenAlign(std::shared_ptr<ParticleBillboard> particle)
@@ -339,7 +360,7 @@ namespace Wiwa {
 	ParticleBillboard::ParticleBillboard()
 	{
 		//set variables
-		transform.scale = glm::vec3(1, 1, 1);
+		
 
 		lifetime = 1;
 		color = glm::vec4(1, 1, 1, 1);
@@ -350,6 +371,15 @@ namespace Wiwa {
 		direction = glm::vec3(0, 0, 0);
 		followEmitter = false;
 		followParticle = false;
+		transform.position = glm::vec3(0, 0, 0);
+		transform.localPosition = glm::vec3(0, 0, 0);
+		transform.rotation = glm::vec3(0, 0, 0);
+		transform.localRotation = glm::vec3(0, 0, 0);
+		transform.scale = glm::vec3(1, 1, 1);
+		transform.localScale = glm::vec3(1, 1, 1);
+
+		//transform.localScale = scale;
+
 	}
 }
 
