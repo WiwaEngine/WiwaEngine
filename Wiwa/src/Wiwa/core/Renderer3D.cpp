@@ -335,7 +335,7 @@ namespace Wiwa {
 		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
 		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 		model = glm::scale(model, scale);
-		
+
 		/*
 		material->getShader()->Bind();
 		material->getShader()->SetMVP(model, camera->getView(), camera->getProjection());
@@ -347,7 +347,7 @@ namespace Wiwa {
 		//SetUpLight(matShader, camera, directional, pointLights, spotLights);
 		////material->Bind();
 
-		
+
 
 		m_ParticleShader->Bind();
 		m_ParticleShader->setUniform(m_ParticleUniforms.Model, model);
@@ -360,10 +360,11 @@ namespace Wiwa {
 		glBindVertexArray(0);
 
 		m_ParticleShader->UnBind();
-		
+
 
 		//material->UnBind();
 		camera->frameBuffer->Unbind();
+
 		
 	}
 

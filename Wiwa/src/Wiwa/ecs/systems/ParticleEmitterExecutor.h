@@ -65,7 +65,7 @@ namespace Wiwa {
 
 		void UpdateParticles();
 
-		float timer = 100;
+		float timer = 0;
 
 		ParticleBillboard* setRotation(const glm::vec3 rot);
 

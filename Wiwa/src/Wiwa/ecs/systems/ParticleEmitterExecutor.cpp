@@ -42,7 +42,7 @@ namespace Wiwa {
 
 		if (emitter->repeat)
 		{
-			WI_CORE_INFO("%f", timer);
+			//WI_CORE_INFO("%f", timer);
 
 			timer -= dt;
 		}
@@ -89,10 +89,10 @@ namespace Wiwa {
 		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
 		//Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
 
-		float dt = Time::GetDeltaTime() / 1000;
+		float dt = Time::GetRealDeltaTime() / 1000;
 		timer -= dt;
-		std::string message = "timer: " + std::to_string(timer);
 
+		std::string message = "timer: " + std::to_string(timer);
 		WI_CORE_INFO(message.c_str());
 
 		int p_count = 0;
@@ -113,8 +113,6 @@ namespace Wiwa {
 				glm::vec3 resultantPosition = p->velocity * dt;
 
 				p->transform.localPosition += resultantPosition;
-
-
 
 
 				p->vertices[i] = ref_vertices[i] + p->transform.localPosition;
@@ -192,19 +190,7 @@ namespace Wiwa {
 	void ParticleEmitterExecutor::AddParticles()
 	{
 
-		/*std::shared_ptr<ParticleBillboard> p = std::make_shared<ParticleBillboard>();
-		for (size_t i = 0; i < 4; i++)
-		{
-			p->vertices[i] = ref_vertices[i];
-			p->tex_coords[i] = ref_tex_coords[i];
-		}
-		for (size_t i = 0; i < 6; i++)
-		{
-			p->vertex_indices[i] = ref_vertex_indices[i];
-		}
-
-		p->transform.scale = glm::vec3(1, 1, 1);
-		activeParticles.push_back(p);*/
+		std::shared_ptr<ParticleBillboard> p = std::make_shared<ParticleBillboard>();
 
 		Transform3D* transform = GetComponent<Transform3D>();
 		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
@@ -216,7 +202,6 @@ namespace Wiwa {
 			amountToAdd = Wiwa::Math::RandomRange(emitter->particle_amount_range[0], emitter->particle_amount_range[1]);
 		}
 
-		std::shared_ptr<ParticleBillboard> p = std::make_shared<ParticleBillboard>();
 
 		for (size_t i = 0; i < amountToAdd; i++)
 		{
