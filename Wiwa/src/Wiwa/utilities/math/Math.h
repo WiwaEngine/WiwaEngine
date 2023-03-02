@@ -255,5 +255,21 @@ namespace Wiwa {
 
 			return true;
 		}
+
+		inline float RandomRange(float value01, float value02) {
+
+			if (value01 > value02) {
+
+				float i = value01;
+				value01 = value02;
+				value02 = i;
+
+			}
+
+			float ret = value01 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (value02 - value01)));
+
+			return ret;
+
+		}
 	}
 }

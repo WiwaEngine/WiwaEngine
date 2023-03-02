@@ -18,7 +18,21 @@ namespace Wiwa {
 		int vertex_indices[6];
 		Transform3D transform;
 
+
 		void setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up);
+
+		float		lifetime = 0;
+		glm::vec4	color;
+		glm::vec3	originPosition;
+		glm::vec3	localPosition;
+		glm::vec3	velocity;
+		glm::vec3	acceleration;
+		glm::vec3	direction;
+		bool		followEmitter;
+		bool		followParticle;
+
+		ParticleBillboard();
+
 	};
 
 
@@ -47,7 +61,11 @@ namespace Wiwa {
 
 		void DeleteParticleSystem();
 
-		void AddParticle();
+		void AddParticles();
+
+		void UpdateParticles();
+
+		float timer = 0;
 
 		ParticleBillboard* setRotation(const glm::vec3 rot);
 
