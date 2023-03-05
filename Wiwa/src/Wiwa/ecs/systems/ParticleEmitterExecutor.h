@@ -18,12 +18,10 @@ namespace Wiwa {
 		int vertex_indices[6];
 		Transform3D transform;
 
-
-		void setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up);
-
 		float		lifetime = 0;
 		glm::vec4	color;
 		glm::vec3	originPosition;
+		glm::vec3	originRotation;
 		glm::vec3	localPosition;
 		glm::vec3	velocity;
 		glm::vec3	acceleration;
@@ -56,6 +54,8 @@ namespace Wiwa {
 		void OnSystemRemoved() override;
 
 		void ScreenAlign(std::shared_ptr<ParticleBillboard> particle);
+
+		glm::mat4 setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up);
 
 		glm::mat4 eulerAngleYXZ(float yaw, float pitch, float roll)
 		{

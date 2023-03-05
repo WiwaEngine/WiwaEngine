@@ -503,6 +503,33 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 
 	}
 
+	//particle origin rotation
+	{
+		ImGui::Dummy(ImVec2(0, 0));
+		ImGui::SameLine();
+		ImGui::Checkbox("##particle_originRotation_isRanged", &emitter->particle_originRotation_isRanged);
+		ImGui::SameLine();
+		ImGui::Dummy(ImVec2(2, 0));
+		ImGui::SameLine();
+		ImGui::Text("Particle Rotation");
+
+		if (emitter->particle_originRotation_isRanged)
+		{
+			ImGui::Dummy(ImVec2(38, 0));
+			ImGui::SameLine();
+			ImGui::DragFloat3("##particle_originRotation_range0", &(emitter->particle_originRotation_range[0])[0], 0.05f, 0.0f, 0.0f, "%.2f");
+			ImGui::Dummy(ImVec2(38, 0));
+			ImGui::SameLine();
+			ImGui::DragFloat3("##particle_originRotation_range1", &(emitter->particle_originRotation_range[1])[0], 0.05f, 0.0f, 0.0f, "%.2f");
+		}
+		else
+		{
+			ImGui::Dummy(ImVec2(38, 0));
+			ImGui::SameLine();
+			ImGui::DragFloat3("##particle_originRotation", &(emitter->particle_originRotation)[0], 0.05f, 0.0f, 0.0f, "%.2f");
+		}
+	}
+
 	//particle initial velocity
 	{
 		ImGui::Dummy(ImVec2(0, 0));
@@ -595,12 +622,6 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 			ImGui::Text("Particle Direction");*/
 		}
 	}
-
-
-
-
-
-	
 
 	//ImGui::SliderFloat("Lifetime", &emitter->lifeTime, 0.001f, 1.0f);
 

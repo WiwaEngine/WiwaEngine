@@ -62,9 +62,8 @@ namespace Wiwa {
 
 		}
 
-
-
 		UpdateParticles();
+
 	}
 
 	void ParticleEmitterExecutor::OnDestroy()
@@ -104,14 +103,12 @@ namespace Wiwa {
 			}
 
 			p->lifetime -= dt;
-
-
 			
 			//update particles mesh points
 			p->velocity += p->acceleration * dt;
 			glm::vec3 resultantPosition = p->velocity * dt;
 
-			p->transform.localPosition += resultantPosition;
+			p->transform.position += resultantPosition;
 
 			for (size_t i = 0; i < 4; i++)
 			{
@@ -119,18 +116,18 @@ namespace Wiwa {
 				
 
 
-				p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.localPosition;
+				p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation + p->transform.rotation;
 
 				if (p->followEmitter)
 				{
-					p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.localPosition;//+ entity position
+					p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation + +p->transform.rotation;//+ entity position
 				}
 
 				//emitterComp->position
 			}
-
-			//ScreenAlign(p);
 				
+			ScreenAlign(p);
+
 			//draw particles
 			{
 
@@ -213,6 +210,7 @@ namespace Wiwa {
 
 		for (size_t i = 0; i < amountToAdd; i++)
 		{
+
 			std::shared_ptr<ParticleBillboard> p = std::make_shared<ParticleBillboard>();
 
 			//set particle lifetime
@@ -237,7 +235,19 @@ namespace Wiwa {
 			else
 			{
 				p->originPosition = emitter->particle_originPosition;
+			}
 
+			if (emitter->particle_originRotation_isRanged)
+			{
+				float x = Wiwa::Math::RandomRange(emitter->particle_originRotation_range[0].x, emitter->particle_originRotation_range[1].x);
+				float y = Wiwa::Math::RandomRange(emitter->particle_originRotation_range[0].y, emitter->particle_originRotation_range[1].y);
+				float z = Wiwa::Math::RandomRange(emitter->particle_originRotation_range[0].z, emitter->particle_originRotation_range[1].z);
+
+				p->originRotation = glm::vec3(x, y, z);
+			}
+			else
+			{
+				p->originRotation = emitter->particle_originRotation;
 			}
 
 			//set initial velocity
@@ -314,9 +324,9 @@ namespace Wiwa {
 		CameraId cameraId;
 		cameraId = cm.getActiveCameraId();
 		Wiwa::Camera* cam = cm.getCamera(cameraId);
-		glm::vec3 offset;
+		glm::vec3 offset = glm::vec3(1.0f, 2.0f, 3.0f); //Adjust the desired offset
 
-		glm::vec3 particleDirection = cam->getPosition() - particle->transform.localPosition;
+		glm::vec3 particleDirection = cam->getPosition() - particle->transform.position;
 		particleDirection = glm::normalize(particleDirection);
 		glm::vec3 right = glm::cross(particleDirection, glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::vec3 up = glm::cross(right, particleDirection);
@@ -326,6 +336,16 @@ namespace Wiwa {
 			right.y, up.y, particleDirection.y, 0.0f,
 			right.z, up.z, particleDirection.z, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
+
+		//particleManager.setRotation(m4[3]);
+
+		glm::mat4 lookAtMatrix;
+
+		lookAtMatrix = setRoation((rotationMatrix[3]), particle->transform.position, up);
+
+		particle->transform.position = glm::vec3(lookAtMatrix[3]);
+
+		//------------------------------------------------------------------------------------------------------------------
 
 		////Si no funciona almacenar los valores en vez de localMatrix en una m4 temporal
 		////Otra solucion es igualar la localMatrix = rotationMatrix
@@ -345,16 +365,17 @@ namespace Wiwa {
 
 		//particle->transform.localPosition = glm::vec3(particle->transform.localMatrix[3]);
 
-		//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------------------------------------
 		//Aqui
-		glm::mat4 localRotationMatrix = eulerAngleYXZ(particle->transform.localRotation.y, particle->transform.localRotation.x, particle->transform.localRotation.z);
+		/*glm::mat4 localRotationMatrix = eulerAngleYXZ(particle->transform.localRotation.y, particle->transform.localRotation.x, particle->transform.localRotation.z);
 		localRotationMatrix *= rotationMatrix;
 		glm::vec3 newLocalRotation = extractEulerAngleYXZ(localRotationMatrix);
 		particle->transform.localPosition += offset;
-		particle->transform.localMatrix = glm::translate(glm::mat4(1.0f), particle->transform.localPosition) * eulerAngleYXZ(newLocalRotation.y, newLocalRotation.x, newLocalRotation.z);
+		particle->transform.localMatrix = glm::translate(glm::mat4(1.0f), particle->transform.localPosition) * eulerAngleYXZ(newLocalRotation.y, newLocalRotation.x, newLocalRotation.z);*/
+
 	}
 
-	void ParticleBillboard::setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up)
+	glm::mat4 ParticleEmitterExecutor::setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up)
 	{
 		//When particles start drawing in the screen we might need to adjust the formula
 		//billboardRotation = rot;
@@ -370,7 +391,7 @@ namespace Wiwa {
 
 		//glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp);
 
-		glm::lookAt(pos, pos + front, up);
+		return glm::lookAt(pos, pos + front, up);
 	}
 
 	
@@ -392,6 +413,7 @@ namespace Wiwa {
 		lifetime = 1;
 		color = glm::vec4(1, 1, 1, 1);
 		originPosition = glm::vec3(0, 0, 0);
+		originRotation = glm::vec3(1, 1, 1);
 		localPosition = glm::vec3(0, 0, 0);
 		velocity = glm::vec3(0, 0, 0);
 		acceleration = glm::vec3(0, 0, 0);

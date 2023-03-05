@@ -37,6 +37,10 @@ namespace Wiwa {
 		bool		particle_originPosition_isRanged;
 		glm::vec3	particle_originPosition_range[2];
 
+		glm::vec3	particle_originRotation;
+		bool		particle_originRotation_isRanged;
+		glm::vec3	particle_originRotation_range[2];
+
 		glm::vec3	particle_velocity;
 		bool		particle_velocity_isRanged;
 		glm::vec3	particle_velocity_range[2];
