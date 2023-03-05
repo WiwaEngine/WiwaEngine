@@ -10,6 +10,7 @@
 #include <Wiwa/utilities/render/LightManager.h>
 #include <Wiwa/utilities/math/Math.h>
 #include <glew.h>
+#include <Wiwa/utilities/Log.h>
 
 namespace Wiwa {
 	ParticleEmitterExecutor::ParticleEmitterExecutor()
@@ -101,6 +102,8 @@ namespace Wiwa {
 
 				continue;
 			}
+			ScreenAlign(p);
+			/*p->transform.rotation.y += 0.01;*/
 
 			p->lifetime -= dt;
 			
@@ -116,17 +119,15 @@ namespace Wiwa {
 				
 
 
-				p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation + p->transform.rotation;
+				p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation;
 
 				if (p->followEmitter)
 				{
-					p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation + +p->transform.rotation;//+ entity position
+					p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation;//+ entity position
 				}
 
 				//emitterComp->position
 			}
-				
-			ScreenAlign(p);
 
 			//draw particles
 			{
@@ -315,7 +316,6 @@ namespace Wiwa {
 
 		}
 
-		
 	}
 
 	void ParticleEmitterExecutor::ScreenAlign(std::shared_ptr<ParticleBillboard> particle)
@@ -324,55 +324,58 @@ namespace Wiwa {
 		CameraId cameraId;
 		cameraId = cm.getActiveCameraId();
 		Wiwa::Camera* cam = cm.getCamera(cameraId);
-		glm::vec3 offset = glm::vec3(1.0f, 2.0f, 3.0f); //Adjust the desired offset
+		glm::vec3 offset = glm::vec3(-90.0f, -60.0f, 0.0f); //Adjust the desired offset
 
-		glm::vec3 particleDirection = cam->getPosition() - particle->transform.position;
-		particleDirection = glm::normalize(particleDirection);
-		glm::vec3 right = glm::cross(particleDirection, glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::vec3 up = glm::cross(right, particleDirection);
+		particle->transform.rotation.x = cam->getRotation().x + offset.x;
+		particle->transform.rotation.y = cam->getRotation().y + offset.y;
+		particle->transform.rotation.z = cam->getRotation().z + offset.z;
 
-		glm::mat4 rotationMatrix = glm::mat4(
-			right.x, up.x, particleDirection.x, 0.0f,
-			right.y, up.y, particleDirection.y, 0.0f,
-			right.z, up.z, particleDirection.z, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
+		//glm::vec3 particleDirection = cam->getPosition() - particle->transform.position;
+		//particleDirection = glm::normalize(particleDirection);
+		//glm::vec3 right = glm::cross(particleDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+		//glm::vec3 up = glm::cross(right, particleDirection);
 
-		//particleManager.setRotation(m4[3]);
+		//glm::mat4 rotationMatrix = glm::mat4(
+		//	right.x, up.x, particleDirection.x, 0.0f,
+		//	right.y, up.y, particleDirection.y, 0.0f,
+		//	right.z, up.z, particleDirection.z, 0.0f,
+		//	0.0f, 0.0f, 0.0f, 1.0f);
 
-		glm::mat4 lookAtMatrix;
+		////particleManager.setRotation(m4[3]);
+		///*
+		//glm::mat4 lookAtMatrix;
+		//lookAtMatrix = setRoation((rotationMatrix[3]), particle->transform.position, up);
+		//*/
 
-		lookAtMatrix = setRoation((rotationMatrix[3]), particle->transform.position, up);
+		////------------------------------------------------------------------------------------------------------------------
 
-		particle->transform.position = glm::vec3(lookAtMatrix[3]);
+		//////Si no funciona almacenar los valores en vez de localMatrix en una m4 temporal
+		//////Otra solucion es igualar la localMatrix = rotationMatrix
+		////particle->transform.localMatrix =  rotationMatrix;
 
-		//------------------------------------------------------------------------------------------------------------------
+		//////glm::vec3 skew;
+		//////glm::vec4 perspective;
+		//////glm::vec3 scaling;
+		//////glm::quat rotation;
+		//////glm::vec3 translation;
+		////////Falla al hacer decompose de la matriz
+		////////Valores no inicializados? (transform.position)
+		//////glm::decompose(particle->transform.localMatrix, scaling, rotation, translation, skew, perspective);
+		//////particle->transform.position = translation;
+		//////glm::vec3 eulerAnglesRadians = glm::eulerAngles(rotation);
+		//////particle->transform.rotation = glm::degrees(eulerAnglesRadians);
 
-		////Si no funciona almacenar los valores en vez de localMatrix en una m4 temporal
-		////Otra solucion es igualar la localMatrix = rotationMatrix
-		//particle->transform.localMatrix =  rotationMatrix;
+		////particle->transform.localPosition = glm::vec3(particle->transform.localMatrix[3]);
 
-		////glm::vec3 skew;
-		////glm::vec4 perspective;
-		////glm::vec3 scaling;
-		////glm::quat rotation;
-		////glm::vec3 translation;
-		//////Falla al hacer decompose de la matriz
-		//////Valores no inicializados? (transform.position)
-		////glm::decompose(particle->transform.localMatrix, scaling, rotation, translation, skew, perspective);
-		////particle->transform.position = translation;
-		////glm::vec3 eulerAnglesRadians = glm::eulerAngles(rotation);
-		////particle->transform.rotation = glm::degrees(eulerAnglesRadians);
-
-		//particle->transform.localPosition = glm::vec3(particle->transform.localMatrix[3]);
-
-		//-------------------------------------------------------------------------------------------------------------------
-		//Aqui
-		/*glm::mat4 localRotationMatrix = eulerAngleYXZ(particle->transform.localRotation.y, particle->transform.localRotation.x, particle->transform.localRotation.z);
-		localRotationMatrix *= rotationMatrix;
-		glm::vec3 newLocalRotation = extractEulerAngleYXZ(localRotationMatrix);
-		particle->transform.localPosition += offset;
-		particle->transform.localMatrix = glm::translate(glm::mat4(1.0f), particle->transform.localPosition) * eulerAngleYXZ(newLocalRotation.y, newLocalRotation.x, newLocalRotation.z);*/
-
+		////-------------------------------------------------------------------------------------------------------------------
+		////Aqui
+		//glm::mat4 localRotationMatrix = eulerAngleYXZ(particle->transform.rotation.y, particle->transform.rotation.x, particle->transform.rotation.z);
+		//localRotationMatrix *= rotationMatrix;
+		//glm::vec3 newLocalRotation = extractEulerAngleYXZ(localRotationMatrix);
+		//particle->transform.localPosition += offset;
+		//particle->transform.localMatrix = glm::translate(glm::mat4(1.0f), particle->transform.localPosition) * eulerAngleYXZ(newLocalRotation.y, newLocalRotation.x, newLocalRotation.z);
+		//
+		///*particle->transform.rotation = particle->transform.localMatrix[3];*/
 	}
 
 	glm::mat4 ParticleEmitterExecutor::setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up)
