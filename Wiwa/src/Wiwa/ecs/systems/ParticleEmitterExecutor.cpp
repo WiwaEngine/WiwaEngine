@@ -1,6 +1,5 @@
 #include <wipch.h>
 #include <Wiwa/core/Renderer3D.h>
-
 #include "ParticleEmitterExecutor.h"
 #include "Wiwa/core/Resources.h"
 #include "Wiwa/ecs/components/ParticleEmitter.h"
@@ -10,7 +9,6 @@
 #include <Wiwa/utilities/render/LightManager.h>
 #include <Wiwa/utilities/math/Math.h>
 #include <glew.h>
-#include <Wiwa/utilities/Log.h>
 
 namespace Wiwa {
 	ParticleEmitterExecutor::ParticleEmitterExecutor()
@@ -74,22 +72,15 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::UpdateParticles()
 	{
-
-		//WI_CORE_INFO("test");
-
-
 		Renderer3D& r3d = Application::Get().GetRenderer3D();
 		CameraManager& man = Wiwa::SceneManager::getActiveScene()->GetCameraManager();
 		EntityManager& eman = Wiwa::SceneManager::getActiveScene()->GetEntityManager();
 		LightManager& lman = Wiwa::SceneManager::getActiveScene()->GetLightManager();
 
 		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
+
+		//Add material: (currently only a shader)
 		//Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
-
-
-		//std::string message = "timer: " + std::to_string(timer);
-		//WI_CORE_INFO(message.c_str());
-
 
 		for (size_t j = 0; j < activeParticles.size(); j++)
 		{
@@ -102,7 +93,9 @@ namespace Wiwa {
 
 				continue;
 			}
-			//ScreenAlign(p);
+
+			//particles look at the camera:
+			ScreenAlign(p);
 
 			p->lifetime -= dt;
 			
@@ -120,8 +113,6 @@ namespace Wiwa {
 			for (size_t i = 0; i < 4; i++)
 			{
 				//update particle variables
-				
-
 
 				p->vertices[i] = (ref_vertices[i] + p->startingPosition + p->transform.position);
 
@@ -189,7 +180,6 @@ namespace Wiwa {
 				glDeleteBuffers(1, &EBO);
 			}
 		}
-		////WI_CORE_INFO("test");
 	}
 
 	void ParticleEmitterExecutor::OnSystemAdded() // Called when system added to the editor
@@ -227,7 +217,6 @@ namespace Wiwa {
 			{
 				p->lifetime = emitter->particle_lifetime;
 			}
-
 
 			//position
 			{
@@ -276,7 +265,6 @@ namespace Wiwa {
 				}
 			}
 			
-
 			//rotation
 			{
 				//set starting rotation
@@ -293,7 +281,6 @@ namespace Wiwa {
 					p->startingRotation = emitter->particle_startingRotation;
 				}
 			}
-			
 
 			//scale
 			{
@@ -326,7 +313,6 @@ namespace Wiwa {
 				}
 			}
 
-
 			p->followEmitter = emitter->particle_followEmitter;
 			p->followParticle = emitter->particle_followParticle;
 
@@ -345,7 +331,6 @@ namespace Wiwa {
 			p->transform.scale = glm::vec3(1, 1, 1);
 
 			activeParticles.push_back(p);
-
 		}
 
 	}
@@ -361,75 +346,8 @@ namespace Wiwa {
 		particle->transform.rotation.x = cam->getRotation().x + offset.x;
 		particle->transform.rotation.y = cam->getRotation().y + offset.y;
 		particle->transform.rotation.z = cam->getRotation().z + offset.z;
-
-		//glm::vec3 particleDirection = cam->getPosition() - particle->transform.position;
-		//particleDirection = glm::normalize(particleDirection);
-		//glm::vec3 right = glm::cross(particleDirection, glm::vec3(0.0f, 1.0f, 0.0f));
-		//glm::vec3 up = glm::cross(right, particleDirection);
-
-		//glm::mat4 rotationMatrix = glm::mat4(
-		//	right.x, up.x, particleDirection.x, 0.0f,
-		//	right.y, up.y, particleDirection.y, 0.0f,
-		//	right.z, up.z, particleDirection.z, 0.0f,
-		//	0.0f, 0.0f, 0.0f, 1.0f);
-
-		////particleManager.setRotation(m4[3]);
-		///*
-		//glm::mat4 lookAtMatrix;
-		//lookAtMatrix = setRoation((rotationMatrix[3]), particle->transform.position, up);
-		//*/
-
-		////------------------------------------------------------------------------------------------------------------------
-
-		//////Si no funciona almacenar los valores en vez de localMatrix en una m4 temporal
-		//////Otra solucion es igualar la localMatrix = rotationMatrix
-		////particle->transform.localMatrix =  rotationMatrix;
-
-		//////glm::vec3 skew;
-		//////glm::vec4 perspective;
-		//////glm::vec3 scaling;
-		//////glm::quat rotation;
-		//////glm::vec3 translation;
-		////////Falla al hacer decompose de la matriz
-		////////Valores no inicializados? (transform.position)
-		//////glm::decompose(particle->transform.localMatrix, scaling, rotation, translation, skew, perspective);
-		//////particle->transform.position = translation;
-		//////glm::vec3 eulerAnglesRadians = glm::eulerAngles(rotation);
-		//////particle->transform.rotation = glm::degrees(eulerAnglesRadians);
-
-		////particle->transform.localPosition = glm::vec3(particle->transform.localMatrix[3]);
-
-		////-------------------------------------------------------------------------------------------------------------------
-		////Aqui
-		//glm::mat4 localRotationMatrix = eulerAngleYXZ(particle->transform.rotation.y, particle->transform.rotation.x, particle->transform.rotation.z);
-		//localRotationMatrix *= rotationMatrix;
-		//glm::vec3 newLocalRotation = extractEulerAngleYXZ(localRotationMatrix);
-		//particle->transform.localPosition += offset;
-		//particle->transform.localMatrix = glm::translate(glm::mat4(1.0f), particle->transform.localPosition) * eulerAngleYXZ(newLocalRotation.y, newLocalRotation.x, newLocalRotation.z);
-		//
-		///*particle->transform.rotation = particle->transform.localMatrix[3];*/
 	}
 
-	glm::mat4 ParticleEmitterExecutor::setRoation(glm::vec3 rot, glm::vec3 pos, glm::vec3 up)
-	{
-		//When particles start drawing in the screen we might need to adjust the formula
-		//billboardRotation = rot;
-
-		glm::vec3 direction;
-		direction.x = cos(glm::radians(rot.x)) * cos(glm::radians(rot.y));
-		direction.y = sin(glm::radians(rot.y));
-		direction.z = sin(glm::radians(rot.x)) * cos(glm::radians(rot.y));
-
-		glm::vec3 front = glm::normalize(direction);
-
-		//setFront({ front.x, front.y, front.z });
-
-		//glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp);
-
-		return glm::lookAt(pos, pos + front, up);
-	}
-
-	
 	void ParticleEmitterExecutor::OnSystemRemoved() // Called when system removed to the editor
 	{
 
@@ -474,9 +392,6 @@ namespace Wiwa {
 
 		followEmitter = false;
 		followParticle = false;
-		
-
-
 	}
 }
 

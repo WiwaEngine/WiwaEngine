@@ -281,21 +281,6 @@ void InspectorPanel::DrawSpotLightComponent(byte* data)
 	ImGui::InputFloat("Cutoff", &lsrc->Cutoff);
 }
 
-void InspectorPanel::DrawParticleComponent(byte* data) // -> temporal
-{
-	
-	Wiwa::ParticleComponent* pComponent = (Wiwa::ParticleComponent*)data;
-
-	DrawVec3Control("Particle Position", &pComponent->Position);
-	ImGui::ColorEdit3("Color", glm::value_ptr(pComponent->Color));
-	ImGui::SliderFloat("Lifetime", &pComponent->lifeTime, 0.001f, 1.0f);
-	ImGui::SliderFloat("Speed", &pComponent->speed, 0.001f, 1.0f);
-	ImGui::SliderFloat("Size", &pComponent->size, 0.001f, 1.0f);
-	ImGui::SliderFloat("Direction Variation", &pComponent->directionVariation, 0.001f, 1.0f);
-	ImGui::SliderFloat("Distance to Camera", &pComponent->distanceToCamera, 0.001f, 1.0f);
-
-}
-
 void ParticleTab()
 {
 	ImGui::Dummy(ImVec2(38, 0));

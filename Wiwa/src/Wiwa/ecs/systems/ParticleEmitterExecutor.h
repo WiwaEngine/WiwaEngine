@@ -1,8 +1,6 @@
 #pragma once
-#include "System.h"
-//#include "../components/Transform3D.h"
-//#include "../components/AudioSource.h"
 
+#include "System.h"
 #include <vector>
 #include <map>
 
@@ -98,11 +96,6 @@ namespace Wiwa {
 
 		std::vector<std::shared_ptr<ParticleBillboard>> activeParticles;
 
-		//quad_vertices[0] = float3(-1, 1, 0);			quad_vertices[3] = float3(1, 1, 0);
-
-
-		//quad_vertices[1] = float3(-1, -1, 0);		quad_vertices[2] = float3(1, -1, 0);
-
 		glm::vec3 ref_vertices[4] = 
 		{
 		glm::vec3(-1, 1, 0),
@@ -111,11 +104,6 @@ namespace Wiwa {
 		glm::vec3(1, -1, 0)
 		};
 
-		//vertices[0].TexCoords = vec2(0, 1);		vertices[3].TexCoords = vec2(1, 1);
-
-
-		//vertices[1].TexCoords = vec2(0, 0);			vertices[2].TexCoords = vec2(1, 0);
-
 		glm::vec2 ref_tex_coords[4] = 
 		{
 			glm::vec2(0, 1),
@@ -123,20 +111,6 @@ namespace Wiwa {
 			glm::vec2(1, 1),
 			glm::vec2(1, 0)
 		};
-
-		//1st triangle
-		//indices[0] = 0;
-
-
-		//indices[1] = 1;		indices[2] = 2;
-
-
-
-		//2nd triangle
-		//indices[3] = 0;		indices[5] = 3;
-
-
-		//						indices[4] = 2;
 
 		int ref_vertex_indices[6] =
 		{
