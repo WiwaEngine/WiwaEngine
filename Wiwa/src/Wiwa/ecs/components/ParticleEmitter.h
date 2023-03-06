@@ -54,9 +54,9 @@ namespace Wiwa {
 
 		
 		//scale
-		glm::vec3	particle_startingSize;
+		glm::vec3	particle_startingSize = glm::vec3(1,1,1);
 		bool		particle_startingSize_isRanged;
-		glm::vec3	particle_startingSize_range[2];
+		glm::vec3	particle_startingSize_range[2] = {glm::vec3(1,1,1) , glm::vec3(1,1,1)};
 
 		glm::vec3	particle_growthVelocity;
 		bool		particle_growthVelocity_isRanged;

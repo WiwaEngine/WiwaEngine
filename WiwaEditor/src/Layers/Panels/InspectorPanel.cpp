@@ -470,16 +470,17 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 		{
 
 			ImGui::Checkbox("##particle_startingPosition_isRanged", &emitter->particle_startingPosition_isRanged);
+			ImGui::SameLine();
 			ImGui::Text("Particle Starting Position");
 
 			if (emitter->particle_startingPosition_isRanged)
 			{
 				DrawVec3Control("", &(emitter->particle_startingPosition_range[0])[0]);
-				DrawVec3Control("", &(emitter->particle_startingPosition_range[1])[0]);
+				DrawVec3Control(" ", &(emitter->particle_startingPosition_range[1])[0]);
 			}
 			else
 			{
-				DrawVec3Control("", &(emitter->particle_startingPosition)[0]);
+				DrawVec3Control("  ", &(emitter->particle_startingPosition)[0]);
 			}
 		}
 
@@ -493,12 +494,12 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 			if (emitter->particle_velocity_isRanged)
 			{
 
-				DrawVec3Control("", &(emitter->particle_velocity_range[0])[0]);
-				DrawVec3Control("", &(emitter->particle_velocity_range[1])[0]);
+				DrawVec3Control("   ", &(emitter->particle_velocity_range[0])[0]);
+				DrawVec3Control("    ", &(emitter->particle_velocity_range[1])[0]);
 			}
 			else
 			{
-				DrawVec3Control("", &(emitter->particle_velocity)[0]);
+				DrawVec3Control("     ", &(emitter->particle_velocity)[0]);
 			}
 		}
 
@@ -512,12 +513,12 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 			if (emitter->particle_acceleration_isRanged)
 			{
 
-				DrawVec3Control("", &(emitter->particle_acceleration_range[0])[0]);
-				DrawVec3Control("", &(emitter->particle_acceleration_range[1])[0]);
+				DrawVec3Control("      ", &(emitter->particle_acceleration_range[0])[0]);
+				DrawVec3Control("       ", &(emitter->particle_acceleration_range[1])[0]);
 			}
 			else
 			{
-				DrawVec3Control("", &(emitter->particle_acceleration)[0]);
+				DrawVec3Control("        ", &(emitter->particle_acceleration)[0]);
 
 			}
 		}
@@ -525,94 +526,94 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 		ImGui::TreePop();
 	}
 	
-	//if (ImGui::TreeNode("Rotation"))
-	//{
-	//	//particle starting rotation
-	//	{
-	//		ImGui::Dummy(ImVec2(0, 0));
-	//		ImGui::SameLine();
-	//		ImGui::Checkbox("##particle_startingRotation_isRanged", &emitter->particle_startingRotation_isRanged);
-	//		ImGui::SameLine();
-	//		ImGui::Text("Particle Rotation");
+	if (ImGui::TreeNode("Rotation"))
+	{
+		//particle starting rotation
+		{
+			ImGui::Dummy(ImVec2(0, 0));
+			ImGui::SameLine();
+			ImGui::Checkbox("##particle_startingRotation_isRanged", &emitter->particle_startingRotation_isRanged);
+			ImGui::SameLine();
+			ImGui::Text("Particle Rotation");
 
-	//		if (emitter->particle_startingRotation_isRanged)
-	//		{
-	//			DrawVec3Control("", &(emitter->particle_startingRotation_range[0])[0]);
-	//			DrawVec3Control("", &(emitter->particle_startingRotation_range[1])[0]);
-	//		}
-	//		else
-	//		{
-	//			DrawVec3Control("", &(emitter->particle_startingRotation)[0]);
-	//		}
-	//	}
-	//	ImGui::TreePop();
-	//}
+			if (emitter->particle_startingRotation_isRanged)
+			{
+				DrawVec3Control("         ", &(emitter->particle_startingRotation_range[0])[0]);
+				DrawVec3Control("          ", &(emitter->particle_startingRotation_range[1])[0]);
+			}
+			else
+			{
+				DrawVec3Control("            ", &(emitter->particle_startingRotation)[0]);
+			}
+		}
+		ImGui::TreePop();
+	}
 
-	//if (ImGui::TreeNode("Size & Growth"))
-	//{
-	//	//particle starting size
-	//	{
-	//		ImGui::Dummy(ImVec2(0, 0));
-	//		ImGui::SameLine();
-	//		ImGui::Checkbox("##particle_startingSize_isRanged", &emitter->particle_startingSize_isRanged);
-	//		ImGui::SameLine();
-	//		ImGui::Dummy(ImVec2(2, 0));
-	//		ImGui::SameLine();
-	//		ImGui::SameLine();
-	//		ImGui::Text("Particle Starting Size");
-	//		if (emitter->particle_startingSize_isRanged)
-	//		{
-	//			ImGui::Dummy(ImVec2(38, 0));
-	//			ImGui::SameLine();
-	//			ImGui::DragFloat3("##particle_startingSize_range0", &(emitter->particle_startingSize_range[0])[0], 0.05f, 0.0f, 0.0f, "%.2f");
-	//			/*ImGui::SameLine();
-	//			ImGui::Text("Particle Direction");*/
-	//			ImGui::Dummy(ImVec2(38, 0));
-	//			ImGui::SameLine();
-	//			ImGui::DragFloat3("##particle_startingSize_range1", &(emitter->particle_startingSize_range[1])[0], 0.05f, 0.0f, 0.0f, "%.2f");
-	//		}
-	//		else
-	//		{
-	//			ImGui::Dummy(ImVec2(38, 0));
-	//			ImGui::SameLine();
-	//			ImGui::DragFloat3("##particle_startingSize", &emitter->particle_startingSize[0], 0.05f, 0.0f, 0.0f, "%.2f");
-	//			/*ImGui::SameLine();
-	//			ImGui::Text("Particle Direction");*/
-	//		}
-	//	}
+	if (ImGui::TreeNode("Size & Growth"))
+	{
+		//particle starting size
+		{
+			ImGui::Dummy(ImVec2(0, 0));
+			ImGui::SameLine();
+			ImGui::Checkbox("##particle_startingSize_isRanged", &emitter->particle_startingSize_isRanged);
+			ImGui::SameLine();
+			ImGui::Dummy(ImVec2(2, 0));
+			ImGui::SameLine();
+			ImGui::SameLine();
+			ImGui::Text("Particle Starting Size");
+			if (emitter->particle_startingSize_isRanged)
+			{
+				ImGui::Dummy(ImVec2(38, 0));
+				ImGui::SameLine();
+				ImGui::DragFloat3("##particle_startingSize_range0", &(emitter->particle_startingSize_range[0])[0], 0.05f, 0.0f, 0.0f, "%.2f");
+				/*ImGui::SameLine();
+				ImGui::Text("Particle Direction");*/
+				ImGui::Dummy(ImVec2(38, 0));
+				ImGui::SameLine();
+				ImGui::DragFloat3("##particle_startingSize_range1", &(emitter->particle_startingSize_range[1])[0], 0.05f, 0.0f, 0.0f, "%.2f");
+			}
+			else
+			{
+				ImGui::Dummy(ImVec2(38, 0));
+				ImGui::SameLine();
+				ImGui::DragFloat3("##particle_startingSize", &emitter->particle_startingSize[0], 0.05f, 0.0f, 0.0f, "%.2f");
+				/*ImGui::SameLine();
+				ImGui::Text("Particle Direction");*/
+			}
+		}
 
-	//	//particle size constant growth rate
-	//	{
-	//		ImGui::Dummy(ImVec2(0, 0));
-	//		ImGui::SameLine();
-	//		ImGui::Checkbox("##particle_growthVelocity_isRanged", &emitter->particle_growthVelocity_isRanged);
-	//		ImGui::SameLine();
-	//		ImGui::Dummy(ImVec2(2, 0));
-	//		ImGui::SameLine();
-	//		ImGui::SameLine();
-	//		ImGui::Text("Particle Growth Rate");
-	//		if (emitter->particle_growthVelocity_isRanged)
-	//		{
-	//			ImGui::Dummy(ImVec2(38, 0));
-	//			ImGui::SameLine();
-	//			ImGui::DragFloat3("##particle_growthVelocity_range0", &(emitter->particle_growthVelocity_range[0])[0], 0.05f, 0.0f, 0.0f, "%.2f");
-	//			/*ImGui::SameLine();
-	//			ImGui::Text("Particle Direction");*/
-	//			ImGui::Dummy(ImVec2(38, 0));
-	//			ImGui::SameLine();
-	//			ImGui::DragFloat3("##particle_growthVelocity_range1", &(emitter->particle_growthVelocity_range[1])[0], 0.05f, 0.0f, 0.0f, "%.2f");
-	//		}
-	//		else
-	//		{
-	//			ImGui::Dummy(ImVec2(38, 0));
-	//			ImGui::SameLine();
-	//			ImGui::DragFloat3("##particle_growthVelocity", &emitter->particle_growthVelocity[0], 0.05f, 0.0f, 0.0f, "%.2f");
-	//			/*ImGui::SameLine();
-	//			ImGui::Text("Particle Direction");*/
-	//		}
-	//	}
-	//	ImGui::TreePop();
-	//}
+		//particle size constant growth rate
+		{
+			ImGui::Dummy(ImVec2(0, 0));
+			ImGui::SameLine();
+			ImGui::Checkbox("##particle_growthVelocity_isRanged", &emitter->particle_growthVelocity_isRanged);
+			ImGui::SameLine();
+			ImGui::Dummy(ImVec2(2, 0));
+			ImGui::SameLine();
+			ImGui::SameLine();
+			ImGui::Text("Particle Growth Rate");
+			if (emitter->particle_growthVelocity_isRanged)
+			{
+				ImGui::Dummy(ImVec2(38, 0));
+				ImGui::SameLine();
+				ImGui::DragFloat3("##particle_growthVelocity_range0", &(emitter->particle_growthVelocity_range[0])[0], 0.05f, 0.0f, 0.0f, "%.2f");
+				/*ImGui::SameLine();
+				ImGui::Text("Particle Direction");*/
+				ImGui::Dummy(ImVec2(38, 0));
+				ImGui::SameLine();
+				ImGui::DragFloat3("##particle_growthVelocity_range1", &(emitter->particle_growthVelocity_range[1])[0], 0.05f, 0.0f, 0.0f, "%.2f");
+			}
+			else
+			{
+				ImGui::Dummy(ImVec2(38, 0));
+				ImGui::SameLine();
+				ImGui::DragFloat3("##particle_growthVelocity", &emitter->particle_growthVelocity[0], 0.05f, 0.0f, 0.0f, "%.2f");
+				/*ImGui::SameLine();
+				ImGui::Text("Particle Direction");*/
+			}
+		}
+		ImGui::TreePop();
+	}
 
 	
 
