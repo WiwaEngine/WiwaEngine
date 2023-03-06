@@ -87,8 +87,8 @@ namespace Wiwa {
 		//Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
 
 
-		std::string message = "timer: " + std::to_string(timer);
-		WI_CORE_INFO(message.c_str());
+		//std::string message = "timer: " + std::to_string(timer);
+		//WI_CORE_INFO(message.c_str());
 
 
 		for (size_t j = 0; j < activeParticles.size(); j++)
@@ -102,16 +102,20 @@ namespace Wiwa {
 
 				continue;
 			}
-			ScreenAlign(p);
-			/*p->transform.rotation.y += 0.01;*/
+			//ScreenAlign(p);
 
 			p->lifetime -= dt;
 			
 			//update particles mesh points
+			
+			//position
 			p->velocity += p->acceleration * dt;
 			glm::vec3 resultantPosition = p->velocity * dt;
 
 			p->transform.position += resultantPosition;
+
+			//size
+			p->transform.scale += p->growthVelocity * dt;
 
 			for (size_t i = 0; i < 4; i++)
 			{
@@ -119,11 +123,11 @@ namespace Wiwa {
 				
 
 
-				p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation;
+				p->vertices[i] = (ref_vertices[i] + p->startingPosition + p->transform.position);
 
 				if (p->followEmitter)
 				{
-					p->vertices[i] = ref_vertices[i] + p->originPosition + p->transform.position + p->originRotation;//+ entity position
+					p->vertices[i] = (ref_vertices[i] + p->startingPosition + p->transform.position);//+ entity position
 				}
 
 				//emitterComp->position
@@ -224,76 +228,104 @@ namespace Wiwa {
 				p->lifetime = emitter->particle_lifetime;
 			}
 
-			//set origin position
-			if (emitter->particle_originPosition_isRanged)
+
+			//position
 			{
-				float x = Wiwa::Math::RandomRange(emitter->particle_originPosition_range[0].x, emitter->particle_originPosition_range[1].x);
-				float y = Wiwa::Math::RandomRange(emitter->particle_originPosition_range[0].y, emitter->particle_originPosition_range[1].y);
-				float z = Wiwa::Math::RandomRange(emitter->particle_originPosition_range[0].z, emitter->particle_originPosition_range[1].z);
+				//set starting position
+				if (emitter->particle_startingPosition_isRanged)
+				{
+					float x = Wiwa::Math::RandomRange(emitter->particle_startingPosition_range[0].x, emitter->particle_startingPosition_range[1].x);
+					float y = Wiwa::Math::RandomRange(emitter->particle_startingPosition_range[0].y, emitter->particle_startingPosition_range[1].y);
+					float z = Wiwa::Math::RandomRange(emitter->particle_startingPosition_range[0].z, emitter->particle_startingPosition_range[1].z);
 
-				p->originPosition = glm::vec3(x, y, z);
+					p->startingPosition = glm::vec3(x, y, z);
+				}
+				else
+				{
+					p->startingPosition = emitter->particle_startingPosition;
+				}
+
+				//set initial velocity
+				if (emitter->particle_velocity_isRanged)
+				{
+
+					float x = Wiwa::Math::RandomRange(emitter->particle_velocity_range[0].x, emitter->particle_velocity_range[1].x);
+					float y = Wiwa::Math::RandomRange(emitter->particle_velocity_range[0].y, emitter->particle_velocity_range[1].y);
+					float z = Wiwa::Math::RandomRange(emitter->particle_velocity_range[0].z, emitter->particle_velocity_range[1].z);
+
+					p->velocity = glm::vec3(x, y, z);
+				}
+				else
+				{
+					p->velocity = emitter->particle_velocity;
+				}
+
+				//set initial acceleration
+				if (emitter->particle_acceleration_isRanged)
+				{
+
+					float x = Wiwa::Math::RandomRange(emitter->particle_acceleration_range[0].x, emitter->particle_acceleration_range[1].x);
+					float y = Wiwa::Math::RandomRange(emitter->particle_acceleration_range[0].y, emitter->particle_acceleration_range[1].y);
+					float z = Wiwa::Math::RandomRange(emitter->particle_acceleration_range[0].z, emitter->particle_acceleration_range[1].z);
+
+					p->acceleration = glm::vec3(x, y, z);
+				}
+				else
+				{
+					p->acceleration = emitter->particle_acceleration;
+				}
 			}
-			else
+			
+
+			//rotation
 			{
-				p->originPosition = emitter->particle_originPosition;
-			}
+				//set starting rotation
+				if (emitter->particle_startingRotation_isRanged)
+				{
+					float x = Wiwa::Math::RandomRange(emitter->particle_startingRotation_range[0].x, emitter->particle_startingRotation_range[1].x);
+					float y = Wiwa::Math::RandomRange(emitter->particle_startingRotation_range[0].y, emitter->particle_startingRotation_range[1].y);
+					float z = Wiwa::Math::RandomRange(emitter->particle_startingRotation_range[0].z, emitter->particle_startingRotation_range[1].z);
 
-			if (emitter->particle_originRotation_isRanged)
+					p->startingRotation = glm::vec3(x, y, z);
+				}
+				else
+				{
+					p->startingRotation = emitter->particle_startingRotation;
+				}
+			}
+			
+
+			//scale
 			{
-				float x = Wiwa::Math::RandomRange(emitter->particle_originRotation_range[0].x, emitter->particle_originRotation_range[1].x);
-				float y = Wiwa::Math::RandomRange(emitter->particle_originRotation_range[0].y, emitter->particle_originRotation_range[1].y);
-				float z = Wiwa::Math::RandomRange(emitter->particle_originRotation_range[0].z, emitter->particle_originRotation_range[1].z);
+				//set initial size growth rate
+				if (emitter->particle_growthVelocity_isRanged)
+				{
+					float x = Wiwa::Math::RandomRange(emitter->particle_growthVelocity_range[0].x, emitter->particle_growthVelocity_range[1].x);
+					float y = Wiwa::Math::RandomRange(emitter->particle_growthVelocity_range[0].y, emitter->particle_growthVelocity_range[1].y);
+					float z = Wiwa::Math::RandomRange(emitter->particle_growthVelocity_range[0].z, emitter->particle_growthVelocity_range[1].z);
 
-				p->originRotation = glm::vec3(x, y, z);
-			}
-			else
-			{
-				p->originRotation = emitter->particle_originRotation;
-			}
+					p->growthVelocity = glm::vec3(x, y, z);
+				}
+				else
+				{
+					p->growthVelocity = emitter->particle_growthVelocity;
+				}
 
-			//set initial velocity
-			if (emitter->particle_velocity_isRanged)
-			{
+				//set initial size
+				if (emitter->particle_growthVelocity_isRanged)
+				{
+					float x = Wiwa::Math::RandomRange(emitter->particle_startingSize_range[0].x, emitter->particle_startingSize_range[1].x);
+					float y = Wiwa::Math::RandomRange(emitter->particle_startingSize_range[0].y, emitter->particle_startingSize_range[1].y);
+					float z = Wiwa::Math::RandomRange(emitter->particle_startingSize_range[0].z, emitter->particle_startingSize_range[1].z);
 
-				float x = Wiwa::Math::RandomRange(emitter->particle_velocity_range[0].x, emitter->particle_velocity_range[1].x);
-				float y = Wiwa::Math::RandomRange(emitter->particle_velocity_range[0].y, emitter->particle_velocity_range[1].y);
-				float z = Wiwa::Math::RandomRange(emitter->particle_velocity_range[0].z, emitter->particle_velocity_range[1].z);
-
-				p->velocity = glm::vec3(x, y, z);
-			}
-			else
-			{
-				p->velocity = emitter->particle_velocity;
-			}
-
-			//set initial acceleration
-			if (emitter->particle_acceleration_isRanged)
-			{
-
-				float x = Wiwa::Math::RandomRange(emitter->particle_acceleration_range[0].x, emitter->particle_acceleration_range[1].x);
-				float y = Wiwa::Math::RandomRange(emitter->particle_acceleration_range[0].y, emitter->particle_acceleration_range[1].y);
-				float z = Wiwa::Math::RandomRange(emitter->particle_acceleration_range[0].z, emitter->particle_acceleration_range[1].z);
-
-				p->acceleration = glm::vec3(x, y, z);
-			}
-			else
-			{
-				p->acceleration = emitter->particle_acceleration;
+					p->transform.localScale = glm::vec3(x, y, z);
+				}
+				else
+				{
+					p->transform.localScale = emitter->particle_startingSize;
+				}
 			}
 
-			//set initial direction
-			if (emitter->particle_direction_isRanged)
-			{
-				float x = Wiwa::Math::RandomRange(emitter->particle_direction_range[0].x, emitter->particle_direction_range[1].x);
-				float y = Wiwa::Math::RandomRange(emitter->particle_direction_range[0].y, emitter->particle_direction_range[1].y);
-				float z = Wiwa::Math::RandomRange(emitter->particle_direction_range[0].z, emitter->particle_direction_range[1].z);
-
-				p->direction = glm::vec3(x, y, z);
-			}
-			else
-			{
-				p->direction = emitter->particle_direction;
-			}
 
 			p->followEmitter = emitter->particle_followEmitter;
 			p->followParticle = emitter->particle_followParticle;
@@ -412,25 +444,38 @@ namespace Wiwa {
 	{
 		//set variables
 		
-
 		lifetime = 1;
 		color = glm::vec4(1, 1, 1, 1);
-		originPosition = glm::vec3(0, 0, 0);
-		originRotation = glm::vec3(1, 1, 1);
-		localPosition = glm::vec3(0, 0, 0);
-		velocity = glm::vec3(0, 0, 0);
-		acceleration = glm::vec3(0, 0, 0);
-		direction = glm::vec3(0, 0, 0);
-		followEmitter = false;
-		followParticle = false;
+		
+		//position
 		transform.position = glm::vec3(0, 0, 0);
 		transform.localPosition = glm::vec3(0, 0, 0);
+
+		startingPosition = glm::vec3(0, 0, 0);
+		velocity = glm::vec3(0, 0, 0);
+		acceleration = glm::vec3(0, 0, 0);
+
+
+		//rotation
 		transform.rotation = glm::vec3(0, 0, 0);
 		transform.localRotation = glm::vec3(0, 0, 0);
+
+		startingRotation = glm::vec3(0, 0, 0);
+
+
+		//scale
 		transform.scale = glm::vec3(1, 1, 1);
 		transform.localScale = glm::vec3(1, 1, 1);
 
-		//transform.localScale = scale;
+		start_size = glm::vec3(1, 1, 1);
+		growthVelocity = glm::vec3(0, 0, 0);
+		growthAcceleration = glm::vec3(0, 0, 0);
+
+
+		followEmitter = false;
+		followParticle = false;
+		
+
 
 	}
 }

@@ -20,12 +20,21 @@ namespace Wiwa {
 
 		float		lifetime = 0;
 		glm::vec4	color;
-		glm::vec3	originPosition;
-		glm::vec3	originRotation;
-		glm::vec3	localPosition;
+
+		//position
+		glm::vec3	startingPosition;
 		glm::vec3	velocity;
 		glm::vec3	acceleration;
-		glm::vec3	direction;
+
+		//rotation
+		glm::vec3	startingRotation;
+
+		//size
+		glm::vec3	start_size;
+		glm::vec3	growthVelocity;
+		glm::vec3	growthAcceleration;
+
+
 		bool		followEmitter;
 		bool		followParticle;
 
