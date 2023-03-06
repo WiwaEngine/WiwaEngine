@@ -29,6 +29,7 @@ namespace Wiwa {
 	void ParticleEmitterExecutor::OnInit()
 	{
 		WI_CORE_INFO("Init");
+
 		AddParticles();
 	}
 
@@ -39,30 +40,32 @@ namespace Wiwa {
 
 		dt = Time::GetRealDeltaTime() / 1000;
 
-		if (timer <= 0)
+		if (emitter)
 		{
-			if (emitter->repeat)
+			if (timer <= 0)
 			{
-				if (emitter->particle_rate_isRanged)
+				if (emitter->repeat)
 				{
-					timer = Wiwa::Math::RandomRange(emitter->particle_rate_range[0], emitter->particle_rate_range[1]);
+					if (emitter->particle_rate_isRanged)
+					{
+						timer = Wiwa::Math::RandomRange(emitter->particle_rate_range[0], emitter->particle_rate_range[1]);
+					}
+					else
+					{
+						timer = emitter->particle_rate;
+					}
 				}
-				else
-				{
-					timer = emitter->particle_rate;
-				}
+
+				AddParticles();
+			}
+			else
+			{
+				timer -= dt;
+
 			}
 
-			AddParticles();
+			UpdateParticles();
 		}
-		else
-		{
-			timer -= dt;
-
-		}
-
-		UpdateParticles();
-
 	}
 
 	void ParticleEmitterExecutor::OnDestroy()
@@ -78,6 +81,7 @@ namespace Wiwa {
 		LightManager& lman = Wiwa::SceneManager::getActiveScene()->GetLightManager();
 
 		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
+		Transform3D* t3D = GetComponent<Transform3D>();
 
 		//Add material: (currently only a shader)
 		//Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitterComp->materialId);
@@ -112,6 +116,13 @@ namespace Wiwa {
 				p->transform.rotation = p->startingRotation;
 			}
 
+			/*if (p->start_size.x == 0.0f && p->start_size.y == 0.0f && p->start_size.z == 0.0f)
+			{
+				p->start_size.x = 1.0f;
+				p->start_size.y = 1.0f;
+				p->start_size.z = 1.0f;
+			}*/
+
 			//size
 			p->transform.localScale += p->growthVelocity * dt;
 
@@ -123,12 +134,7 @@ namespace Wiwa {
 
 				if (p->followEmitter)
 				{
-					p->vertices[i] = (ref_vertices[i] + p->startingPosition + p->transform.position);//+ entity position
-				}
-
-				if (p->startingRotation.x != 0.0f || p->startingRotation.y != 0.0f || p->startingRotation.z != 0.0f)
-				{
-
+					p->vertices[i] = (ref_vertices[i] + t3D->position + p->startingPosition + p->transform.position);//+ entity position
 				}
 				//emitterComp->position
 			}
@@ -295,6 +301,18 @@ namespace Wiwa {
 
 			//scale
 			{
+				glm::vec3 startingSize(1.0f, 1.0f, 1.0f);
+
+				if (emitter->particle_startingSize.x != 0.0f || emitter->particle_startingSize.y != 0.0f || emitter->particle_startingSize.z != 0.0f)
+				{
+					p->start_size = emitter->particle_startingSize;
+				}
+
+				else
+				{
+					emitter->particle_startingSize = startingSize;
+				}
+
 				//set initial size growth rate
 				if (emitter->particle_growthVelocity_isRanged)
 				{
@@ -396,7 +414,7 @@ namespace Wiwa {
 		transform.scale = glm::vec3(1, 1, 1);
 		transform.localScale = glm::vec3(1, 1, 1);
 
-		start_size = glm::vec3(1, 1, 1);
+		start_size = glm::vec3(1.0f, 1.0f, 1.0f);
 		growthVelocity = glm::vec3(0, 0, 0);
 		growthAcceleration = glm::vec3(0, 0, 0);
 
