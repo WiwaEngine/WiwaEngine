@@ -113,7 +113,7 @@ namespace Wiwa {
 			}
 
 			//size
-			p->transform.scale += p->growthVelocity * dt;
+			p->transform.localScale += p->growthVelocity * dt;
 
 			for (size_t i = 0; i < 4; i++)
 			{
@@ -176,12 +176,12 @@ namespace Wiwa {
 					CameraId cam_id = cameras[i];
 					Camera* camera = man.getCamera(cam_id);
 
-					r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.scale,
+					r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
 						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true);
 				}
 
 				//show in editor window
-				r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.scale,
+				r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
 					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true);
 
 				glDeleteVertexArrays(1, &VAO);
