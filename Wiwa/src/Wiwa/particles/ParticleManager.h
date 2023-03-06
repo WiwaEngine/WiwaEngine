@@ -2,7 +2,7 @@
 
 #include <Wiwa/core/Core.h>
 #include <Wiwa/utilities/math/Vector3f.h>
-#include "Wiwa/ecs/components/Billboard.h"
+//#include "Wiwa/ecs/components/Billboard.h"
 #include "Wiwa/ecs/components/ParticleEmitter.h"
 
 #include <vector>
