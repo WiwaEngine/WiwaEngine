@@ -107,6 +107,11 @@ namespace Wiwa {
 
 			p->transform.position += resultantPosition;
 
+			if (p->startingRotation.x != 0.0f || p->startingRotation.y != 0.0f || p->startingRotation.z != 0.0f)
+			{
+				p->transform.rotation = p->startingRotation;
+			}
+
 			//size
 			p->transform.scale += p->growthVelocity * dt;
 
@@ -121,6 +126,10 @@ namespace Wiwa {
 					p->vertices[i] = (ref_vertices[i] + p->startingPosition + p->transform.position);//+ entity position
 				}
 
+				if (p->startingRotation.x != 0.0f || p->startingRotation.y != 0.0f || p->startingRotation.z != 0.0f)
+				{
+
+				}
 				//emitterComp->position
 			}
 
@@ -278,7 +287,9 @@ namespace Wiwa {
 				}
 				else
 				{
-					p->startingRotation = emitter->particle_startingRotation;
+					p->startingRotation.x = emitter->particle_startingRotation.x;
+					p->startingRotation.y = emitter->particle_startingRotation.y;
+					p->startingRotation.z = emitter->particle_startingRotation.z;
 				}
 			}
 
