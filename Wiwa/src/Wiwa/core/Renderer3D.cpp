@@ -347,7 +347,7 @@ namespace Wiwa {
 		//SetUpLight(matShader, camera, directional, pointLights, spotLights);
 		////material->Bind();
 
-
+		glBindTexture(GL_TEXTURE ,textureId);
 
 		m_ParticleShader->Bind();
 		m_ParticleShader->setUniform(m_ParticleUniforms.Model, model);
