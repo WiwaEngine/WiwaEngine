@@ -196,12 +196,12 @@ namespace Wiwa {
 					Camera* camera = man.getCamera(cam_id);
 
 					r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
-						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true, texture->GetTextureId(), texture->GetSize());
+						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true, emitter->texture->GetTextureId(), emitter->texture->GetSize());
 				}
 
 				//show in editor window
 				r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
-					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true, texture->GetTextureId(), texture->GetSize());
+					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true, emitter->texture->GetTextureId(), emitter->texture->GetSize());
 
 				glDeleteVertexArrays(1, &VAO);
 				glDeleteBuffers(1, &VBO);
@@ -379,8 +379,10 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::ParticleEmitterPath(const char* path)
 	{
-		textId1 = Wiwa::Resources::Load<Wiwa::Image>(path);
-		texture = Wiwa::Resources::GetResourceById<Wiwa::Image>(textId1);
+		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
+
+		emitter->textId1 = Wiwa::Resources::Load<Wiwa::Image>(path);
+		emitter->texture = Wiwa::Resources::GetResourceById<Wiwa::Image>(emitter->textId1);
 	}
 
 	void ParticleEmitterExecutor::ScreenAlign(std::shared_ptr<ParticleBillboard> particle)

@@ -49,7 +49,6 @@ bool InspectorPanel::DrawComponent(size_t componentId)
 		if (type->hash == (size_t)TypeHash::PointLight) { DrawPointLightComponent(data); } else
 		if (type->hash == (size_t)TypeHash::DirectionalLight) { DrawDirectionalLightComponent(data); } else
 		if (type->hash == (size_t)TypeHash::SpotLight) { DrawSpotLightComponent(data); } else
-		//if (type->hash == (size_t)TypeHash::ParticleComponent) { DrawParticleComponent(data); } else // -> temporal
 		if (type->hash == (size_t)TypeHash::ParticleEmitter) { DrawParticleEmitterComponent(data); }else
 			
 		// Basic component interface
@@ -657,55 +656,24 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 		ImGui::TreePop();
 	}
 
-	
+	if (ImGui::TreeNode("Texture"))
+	{
+		//particle starting size
+		{
+			/*ImGui::Dummy(ImVec2(0, 0));
+			ImGui::SameLine();
+			ImGui::Checkbox("##particle_texture", &emitter->particle_startingSize_isRanged);
+			ImGui::SameLine();
+			ImGui::Dummy(ImVec2(2, 0));
+			ImGui::SameLine();
+			ImGui::SameLine();*/
 
+			ImGui::Text("Particle Texture");
+			ImGui::Image(ImTextureID(&emitter->textId1), { 128,128 });
+		}
 
-
-	
-
-	//ImGui::SliderFloat("Lifetime", &emitter->lifeTime, 0.001f, 1.0f);
-
-
-	//Wiwa::Particle* particleReference = emitter->particleReference;
-
-	/*DrawVec3Control("Particle Position", &emitter->Position);
-	ImGui::ColorEdit3("Color", glm::value_ptr(emitter->Color));
-	ImGui::SliderFloat("Lifetime", &emitter->lifeTime, 0.001f, 1.0f);
-	ImGui::SliderFloat("Speed", &emitter->speed, 0.001f, 1.0f);
-	ImGui::SliderFloat("Size", &emitter->size, 0.001f, 1.0f);
-	ImGui::SliderFloat("Direction Variation", &emitter->directionVariation, 0.001f, 1.0f);
-	ImGui::SliderFloat("Distance to Camera", &emitter->distanceToCamera, 0.001f, 1.0f);*/
-
-	//Draw materialId field
-	//ImGui::Text("Material");
-	//Wiwa::Material* mat = Wiwa::Resources::GetResourceById<Wiwa::Material>(emitter->materialId);
-	/*if (mat != NULL)
-	{*/
-		//AssetContainer(std::filesystem::path(mat->getMaterialPath()).stem().string().c_str());
-		//if (ImGui::BeginDragDropTarget())
-		//{
-		//	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-		//	{
-		//		const wchar_t* path = (const wchar_t*)payload->Data;
-		//		std::wstring ws(path);
-		//		std::string pathS(ws.begin(), ws.end());
-		//		std::filesystem::path p = pathS.c_str();
-		//		if (p.extension() == ".wimaterial")
-		//		{
-		//			WI_INFO("Trying to load payload at path {0}", pathS.c_str());
-		//			emitter->materialId = Wiwa::Resources::Load<Wiwa::Material>(pathS.c_str());
-		//		}
-		//	}
-
-		//	ImGui::EndDragDropTarget();
-		////}
-		//ImGui::PushID("materialId");
-		//ImGui::Text("Material at: ");
-		//ImGui::SameLine();
-		////ImGui::Text(mat->getMaterialPath());
-		//ImGui::PopID();
-	//}
-
+		ImGui::TreePop();
+	}
 }
 
 InspectorPanel::InspectorPanel(EditorLayer* instance)

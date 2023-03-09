@@ -64,12 +64,6 @@ namespace Wiwa {
 
 		void ScreenAlign(std::shared_ptr<ParticleBillboard> particle);
 
-	public:
-
-		ResourceId textId1;
-
-		Image* texture;
-
 	private:
 
 		void DeleteParticleSystem();
