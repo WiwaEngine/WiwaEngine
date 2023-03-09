@@ -318,7 +318,7 @@ namespace Wiwa {
 	}
 
 	void Renderer3D::RenderQuad(unsigned int vao, std::vector<int> ebo_data, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, const size_t& directional,
-		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights/*, Material* material*/, bool clear, Camera* camera, bool cull)
+		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights/*, Material* material*/, bool clear, Camera* camera, bool cull, uint32_t textureId, const Size2i& srcSize)
 	{
 		/*if (!camera)
 		{

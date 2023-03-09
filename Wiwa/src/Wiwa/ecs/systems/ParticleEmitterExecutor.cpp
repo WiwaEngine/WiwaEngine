@@ -11,6 +11,7 @@
 #include <glew.h>
 
 namespace Wiwa {
+
 	ParticleEmitterExecutor::ParticleEmitterExecutor()
 	{
 
@@ -23,7 +24,19 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::OnAwake()
 	{
+		//Hacer algo parecido con Particles, Ej: AudioSystem
 
+		/*Audio::RegisterGameObject(m_EntityId);
+
+		m_AudioSource = GetComponentIterator<AudioSource>();
+
+		if (m_AudioSource.c_id == WI_INVALID_INDEX) return;
+
+		AudioSource* asrc = GetComponentByIterator<AudioSource>(m_AudioSource);
+
+		if (asrc->isDefaultListener) {
+			Audio::AddDefaultListener(m_EntityId);
+		}*/
 	}
 
 	void ParticleEmitterExecutor::OnInit()
@@ -183,12 +196,12 @@ namespace Wiwa {
 					Camera* camera = man.getCamera(cam_id);
 
 					r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
-						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true);
+						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true, texture->GetTextureId(), texture->GetSize());
 				}
 
 				//show in editor window
 				r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
-					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true);
+					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true, texture->GetTextureId(), texture->GetSize());
 
 				glDeleteVertexArrays(1, &VAO);
 				glDeleteBuffers(1, &VBO);
@@ -362,6 +375,12 @@ namespace Wiwa {
 			activeParticles.push_back(p);
 		}
 
+	}
+
+	void ParticleEmitterExecutor::ParticleEmitterPath(const char* path)
+	{
+		textId1 = Wiwa::Resources::Load<Wiwa::Image>(path);
+		texture = Wiwa::Resources::GetResourceById<Wiwa::Image>(textId1);
 	}
 
 	void ParticleEmitterExecutor::ScreenAlign(std::shared_ptr<ParticleBillboard> particle)
