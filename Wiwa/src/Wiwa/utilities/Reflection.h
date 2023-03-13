@@ -250,5 +250,6 @@ enum class TypeHash : size_t {
 	ColliderCylinder = FNV1A_HASH("ColliderCylinder"),
 	ColliderSphere = FNV1A_HASH("ColliderSphere"),
 	ColliderCapsule = FNV1A_HASH("ColliderCapsule"),
-	RayCast = FNV1A_HASH("RayCast")
+	RayCast = FNV1A_HASH("RayCast"),
+	Character = FNV1A_HASH("Character")
 };

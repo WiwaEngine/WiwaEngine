@@ -788,6 +788,15 @@ namespace Wiwa {
 			rayCast->rayToWorld = { 0,0,0 };
 			rayCast->doRayCasting = false;
 		}
+		else if (type->hash == (size_t)TypeHash::Character)
+		{
+			Wiwa::Character* character = (Wiwa::Character*)data;
+			character->healthPoints = 30;
+			character->damage = 10;
+			character->speed = 5.0f;
+			character->range = 0;
+			character->rof = 1;
+		}
 
 		for (size_t i = 0; i < s_size; i++) {
 			systems[i]->OnComponentAdded(data, type);
