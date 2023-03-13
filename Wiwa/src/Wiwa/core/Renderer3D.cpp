@@ -318,7 +318,7 @@ namespace Wiwa {
 	}
 
 	void Renderer3D::RenderQuad(unsigned int vao, std::vector<int> ebo_data, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, const size_t& directional,
-		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights/*, Material* material*/, bool clear, Camera* camera, bool cull, uint32_t textureId, const Size2i& srcSize)
+		const std::vector<size_t>& pointLights, const std::vector<size_t>& spotLights, Material* material, bool clear, Camera* camera, bool cull, Image* texture, const Size2i& srcSize)
 	{
 		/*if (!camera)
 		{
@@ -341,28 +341,33 @@ namespace Wiwa {
 		material->getShader()->SetMVP(model, camera->getView(), camera->getProjection());
 		*/
 
-		//Shader* matShader = m_ParticleShaderShader;
-		//matShader->Bind();
-		//matShader->SetMVP(model, camera->getView(), camera->getProjection());
-		//SetUpLight(matShader, camera, directional, pointLights, spotLights);
-		////material->Bind();
+		Uniform::SamplerData sdata;
+		sdata.tex_id = texture->GetTextureId();
+		material->SetUniformData("u_Texture", sdata);
 
-		glBindTexture(GL_TEXTURE ,textureId);
+		Shader* matShader = material->getShader();
+		matShader->Bind();
+		matShader->SetMVP(model, camera->getView(), camera->getProjection());
+		SetUpLight(matShader, camera, directional, pointLights, spotLights);
 
-		m_ParticleShader->Bind();
+
+		material->Bind();
+
+		
+
+
+		/*m_ParticleShader->Bind();
 		m_ParticleShader->setUniform(m_ParticleUniforms.Model, model);
 		m_ParticleShader->setUniform(m_ParticleUniforms.View, camera->getView());
-		m_ParticleShader->setUniform(m_ParticleUniforms.Projection, camera->getProjection());
+		m_ParticleShader->setUniform(m_ParticleUniforms.Projection, camera->getProjection());*/
 
 		//make the drawing
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, ebo_data.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
-		m_ParticleShader->UnBind();
-
-
-		//material->UnBind();
+		//m_ParticleShader->UnBind();
+		material->UnBind();
 		camera->frameBuffer->Unbind();
 
 		

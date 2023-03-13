@@ -11,7 +11,7 @@ namespace Wiwa {
 
 	struct WI_API ParticleEmitter {
 
-		ResourceId materialId;
+		Material m_material;
 
 		//Emiter parameters
 		float	particle_rate;
@@ -68,11 +68,10 @@ namespace Wiwa {
 
 
 		bool		particle_followEmitter = false;
-		bool		particle_followParticle = false;
+		bool		particle_followParticle = false;;
 
-		ResourceId textId1;
-		Image* texture;
-
+		ResourceId textId1 = -4;
+		Image* texture = nullptr;
 
 	};
 }
@@ -120,7 +119,5 @@ REFLECTION_BEGIN(Wiwa::ParticleEmitter)
 	REFLECT_MEMBER(particle_growthAcceleration_range)
 	REFLECT_MEMBER(particle_followEmitter)
 	REFLECT_MEMBER(particle_followParticle)
-	REFLECT_MEMBER(textId1)
-	REFLECT_MEMBER(texture)
 
 REFLECTION_END;

@@ -11,7 +11,6 @@
 #include <glew.h>
 
 namespace Wiwa {
-
 	ParticleEmitterExecutor::ParticleEmitterExecutor()
 	{
 
@@ -24,19 +23,7 @@ namespace Wiwa {
 
 	void ParticleEmitterExecutor::OnAwake()
 	{
-		//Hacer algo parecido con Particles, Ej: AudioSystem
 
-		/*Audio::RegisterGameObject(m_EntityId);
-
-		m_AudioSource = GetComponentIterator<AudioSource>();
-
-		if (m_AudioSource.c_id == WI_INVALID_INDEX) return;
-
-		AudioSource* asrc = GetComponentByIterator<AudioSource>(m_AudioSource);
-
-		if (asrc->isDefaultListener) {
-			Audio::AddDefaultListener(m_EntityId);
-		}*/
 	}
 
 	void ParticleEmitterExecutor::OnInit()
@@ -112,7 +99,7 @@ namespace Wiwa {
 			}
 
 			//particles look at the camera:
-			ScreenAlign(p);
+			//ScreenAlign(p);
 
 			p->lifetime -= dt;
 			
@@ -155,6 +142,41 @@ namespace Wiwa {
 			//draw particles
 			{
 
+				//GLuint VAO, VBOPos, VBOTexCo, EBO;
+
+
+				//// Create and bind VAO
+				//glGenVertexArrays(1, &VAO);
+				//glBindVertexArray(VAO);
+
+				//// VBO positions
+				//glGenBuffers(1, &VBOPos);
+				//glBindBuffer(GL_ARRAY_BUFFER, VBOPos);
+				//glBufferData(GL_ARRAY_BUFFER, sizeof(p->vertices), &p->vertices, GL_DYNAMIC_DRAW);
+
+				//// VBO texture coordinates
+				//glGenBuffers(1, &VBOTexCo);
+				//glBindBuffer(GL_ARRAY_BUFFER, VBOTexCo);
+				//glBufferData(GL_ARRAY_BUFFER, sizeof(p->tex_coords), &p->tex_coords, GL_DYNAMIC_DRAW);
+
+				//// EBO elements
+				//glGenBuffers(1, &EBO);
+				//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+				//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(p->vertex_indices) * sizeof(int), &p->vertex_indices, GL_DYNAMIC_DRAW);
+
+
+				//
+				////Position Attributes format and layout
+				//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+				//glEnableVertexAttribArray(0); //-> in shader the layout location is 0
+
+				////Texture Coordinates Attributes format and layout
+				//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)offsetof(VertexTexture, texCoord)); //-> data is stored as [0,0,0][0,0] first position then tex coords, therefore the data starts with an offset of 3
+				//glEnableVertexAttribArray(2); //-> in shader the layout location is 2
+
+				//glBindVertexArray(0);
+
+
 				GLuint VAO, VBO, EBO;
 
 				//set mesh
@@ -176,6 +198,9 @@ namespace Wiwa {
 				glEnableVertexAttribArray(0);
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(glm::vec3[4]));
+
 				glBindVertexArray(0);
 
 
@@ -195,13 +220,20 @@ namespace Wiwa {
 					CameraId cam_id = cameras[i];
 					Camera* camera = man.getCamera(cam_id);
 
-					r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
-						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, camera, true, emitter->texture->GetTextureId(), emitter->texture->GetSize());
+					if (emitter->texture)
+						r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
+							lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), &p->m_material, false, camera, true, emitter->texture, emitter->texture->GetSize());
 				}
 
 				//show in editor window
-				r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
-					lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), /*mat,*/ false, man.editorCamera, true, emitter->texture->GetTextureId(), emitter->texture->GetSize());
+				if (emitter->texture)
+					r3d.RenderQuad(VAO, indices, p->transform.position, p->transform.rotation, p->transform.localScale,
+						lman.GetDirectionalLight(), lman.GetPointLights(), lman.GetSpotLights(), &p->m_material, false, man.editorCamera, true, emitter->texture, emitter->texture->GetSize());
+
+				/*glDeleteVertexArrays(1, &VAO);
+				glDeleteBuffers(1, &VBOPos);
+				glDeleteBuffers(1, &VBOTexCo);
+				glDeleteBuffers(1, &EBO);*/
 
 				glDeleteVertexArrays(1, &VAO);
 				glDeleteBuffers(1, &VBO);
@@ -372,17 +404,17 @@ namespace Wiwa {
 
 			p->transform.scale = glm::vec3(1, 1, 1);
 
+
+			//Set material
+			const char* default_shader = "resources/shaders/debug/particle_display";
+
+			size_t id = Resources::Load<Shader>(default_shader);
+			p->m_material.setShader(Resources::GetResourceById<Shader>(id), default_shader);
+
+
 			activeParticles.push_back(p);
 		}
 
-	}
-
-	void ParticleEmitterExecutor::ParticleEmitterPath(const char* path)
-	{
-		ParticleEmitter* emitter = GetComponent<ParticleEmitter>();
-
-		emitter->textId1 = Wiwa::Resources::Load<Wiwa::Image>(path);
-		emitter->texture = Wiwa::Resources::GetResourceById<Wiwa::Image>(emitter->textId1);
 	}
 
 	void ParticleEmitterExecutor::ScreenAlign(std::shared_ptr<ParticleBillboard> particle)
@@ -410,6 +442,9 @@ namespace Wiwa {
 
 	ParticleBillboard::ParticleBillboard()
 	{
+
+		
+
 		//set variables
 		
 		lifetime = 1;

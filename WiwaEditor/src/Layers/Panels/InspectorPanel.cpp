@@ -669,7 +669,63 @@ void InspectorPanel::DrawParticleEmitterComponent(byte* data)
 			ImGui::SameLine();*/
 
 			ImGui::Text("Particle Texture");
-			ImGui::Image(ImTextureID(&emitter->textId1), { 128,128 });
+
+			uint32_t image_id = 0;
+
+			if (emitter->texture)
+				image_id = emitter->texture->GetTextureId();
+
+			ImGui::Image(ImTextureID(image_id), { 128,128 });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+
+
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::wstring ws(path);
+					std::string pathS(ws.begin(), ws.end());
+					std::filesystem::path p = pathS.c_str();
+					if (p.extension() == ".png" || p.extension() == ".jpg")
+					{
+						WI_CORE_INFO("test");
+
+						bool importedCorrectly = Wiwa::Resources::CheckImport<Wiwa::Image>(pathS.c_str());
+
+						emitter->textId1 = Wiwa::Resources::Load<Wiwa::Image>(pathS.c_str());
+
+						if (emitter->textId1 == WI_INVALID_INDEX)
+						{
+							WI_CORE_INFO("Error loading Image: [WI_INVALID_INDEX]");
+
+						}
+						else
+						{
+							emitter->texture = Wiwa::Resources::GetResourceById<Wiwa::Image>(emitter->textId1);
+
+							/*std::string test = "texture id: " + std::to_string(emitter->texture->GetTextureId());
+
+							WI_CORE_INFO(test);*/
+
+
+							
+
+						}
+
+						/*WI_INFO("Trying to load payload at path {0}", pathS.c_str());
+						p.replace_extension();
+						std::string src = Wiwa::FileSystem::RemoveFolderFromPath("assets", p.string());
+						mesh->meshId = Wiwa::Resources::Load<Wiwa::Model>(src.c_str());
+						mesh->modelIndex = 0;
+						mesh->drawChildren = true;
+
+						Wiwa::Model* m = Wiwa::Resources::GetResourceById<Wiwa::Model>(mesh->meshId);*/
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
 		}
 
 		ImGui::TreePop();
