@@ -7,7 +7,7 @@
 #include <Wiwa/Ui/UiManager.h>
 #include <Wiwa/ecs/EntityManager.h>
 #include <Wiwa/utilities/filesystem/FileSystem.h>
-
+#include <Wiwa/game/GameStateManager.h>
 #include <vector>
 
 typedef size_t SceneId;
@@ -89,5 +89,8 @@ namespace Wiwa {
 		static void UnloadScene(SceneId scene_id, bool unload_resources=true);
 
 		static bool isLoadingScene;
+
+		// Game State Manager
+		static GameStateManager s_GameStateManager;
 	};
 }
