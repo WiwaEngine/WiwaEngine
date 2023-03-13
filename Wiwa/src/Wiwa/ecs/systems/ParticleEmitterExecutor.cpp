@@ -194,12 +194,13 @@ namespace Wiwa {
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(p->vertex_indices) * sizeof(int), &p->vertex_indices, GL_DYNAMIC_DRAW);
 
+				//glVertexAttribPointer(texcoord,2, /* two components per element */GL_FLOAT,GL_FALSE, /* don't normalize, has no effect for floats */ 0, /* distance between elements in sizeof(char), or 0 if tightly packed */ coords);
 				// vertex positions
 				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 				glEnableVertexAttribArray(2);
-				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(glm::vec3[4]));
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)sizeof(glm::vec3[4]));
 
 				glBindVertexArray(0);
 

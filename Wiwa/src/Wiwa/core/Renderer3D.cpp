@@ -72,6 +72,7 @@ namespace Wiwa {
 		m_ParticleShaderId = Resources::Load<Shader>("resources/shaders/debug/particle_display");
 		m_ParticleShader = Resources::GetResourceById<Shader>(m_ParticleShaderId);
 		m_ParticleShader->Compile("resources/shaders/debug/particle_display");
+		m_ParticleShader->addUniform("u_Texture", Wiwa::UniformType::Sampler2D);
 
 		m_ParticleUniforms.Model = m_ParticleShader->getUniformLocation("u_Model");
 		m_ParticleUniforms.View = m_ParticleShader->getUniformLocation("u_View");

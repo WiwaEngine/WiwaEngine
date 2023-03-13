@@ -99,18 +99,20 @@ namespace Wiwa {
 
 		glm::vec3 ref_vertices[4] = 
 		{
-		glm::vec3(-1, 1, 0),
-		glm::vec3(-1, -1, 0),
-		glm::vec3(1, 1, 0),
-		glm::vec3(1, -1, 0)
+		glm::vec3(-1, 1, 0),	//0		0	  2   		1	  3
+		glm::vec3(-1, -1, 0),	//1				  		
+		glm::vec3(1, 1, 0),		//2				  		
+		glm::vec3(1, -1, 0)		//3		1	  3	  		0	  2
+		
 		};
 
 		glm::vec2 ref_tex_coords[4] = 
 		{
-			glm::vec2(0, 1),
-			glm::vec2(0, 0),
-			glm::vec2(1, 1),
-			glm::vec2(1, 0)
+			glm::vec2(0, 0),	//0		0	  2  		1	  3
+			glm::vec2(0, 1),	//1			     		
+			glm::vec2(1, 0),	//2			     		
+			glm::vec2(1, 1)		//3		1	  3  		0	  2
+							
 		};
 
 		int ref_vertex_indices[6] =
